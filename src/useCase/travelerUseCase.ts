@@ -96,13 +96,11 @@ class TravelerUseCase {
       if (!travalerFound?.isVerified) {
         return { status: false, message: "Account is not verified!!" };
       }
-      const verified = await this.bcryption.Encryption(
+      const correct = await this.bcryption.Encryption(
         password,
         travalerFound.password
       );
-      if (!verified) {
-        
-        
+      if (!correct) {
         return { status: false, message: "Whhoops!! Incorrect password" };
       } else if (travalerFound.isBlocked) {
         return { status: false, message: "You can't access this account!!" };

@@ -1,0 +1,14 @@
+interface host {
+    _id: string;
+    name: string;
+    email: string;
+    password: string;
+    isVerified: boolean;
+    isBlocked: boolean;
+    identityImage: string;
+    image: string;
+    wallet: number;
+    walletHistory: Object[];
+}
+
+export default host;

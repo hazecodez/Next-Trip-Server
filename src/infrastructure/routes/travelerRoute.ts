@@ -26,6 +26,7 @@ let travelerUseCase = new TravelerUseCase(
 
 let controller = new TravelerController(travelerUseCase);
 const router = express.Router();
+
 router.post("/verify_otp", (req, res) => {
     console.log("eth");
     
