@@ -26,9 +26,16 @@ let travelerUseCase = new TravelerUseCase(
 
 let controller = new TravelerController(travelerUseCase);
 const router = express.Router();
-
+router.post("/verify_otp", (req, res) => {
+    console.log("eth");
+    
+  controller.AuthenticateTraveler(req,res);
+});
 router.post("/signup", (req, res) => {
   controller.SignUpAndSendOtp(req, res);
 });
+router.post("/login", (req,res)=> {
+    controller.TravelerLogin(req,res);
+})
 
 export default router;

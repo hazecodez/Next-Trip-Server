@@ -54,6 +54,71 @@ class TravelerUseCase {
       throw error;
     }
   }
+
+  async authentication(token: string, otp: string) {
+    try {
+      let decodeToken = this.Jwt.verifyToken(token);
+      if (decodeToken) {
+        let fetchOtp = await this.OtpRepo.getOtp(decodeToken.email);
+        if (fetchOtp) {
+          if (fetchOtp.otp === otp) {
+            let travelerToken = this.Jwt.createToken(
+              decodeToken._id,
+              "traveler"
+            );
+            let travelerData = await this.repository.fetchTravelerData(
+              decodeToken.email
+            );
+            await this.repository.verifyTraveler(decodeToken.email);
+            return {
+              status: true,
+              token: travelerToken,
+              travelerData,
+            };
+          } else {
+            return { status: false, message: "Invalid otp" };
+          }
+        } else {
+          return { status: false, message: "OTP has been expired" };
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async Login(email: string, password: string) {
+    let travalerFound = await this.repository.findTravelerByEmail(email);
+
+    if (travalerFound) {
+      const traveler = await this.repository.fetchTravelerData(email);
+
+      if (!travalerFound?.isVerified) {
+        return { status: false, message: "Account is not verified!!" };
+      }
+      const verified = await this.bcryption.Encryption(
+        password,
+        travalerFound.password
+      );
+      if (!verified) {
+        
+        
+        return { status: false, message: "Whhoops!! Incorrect password" };
+      } else if (travalerFound.isBlocked) {
+        return { status: false, message: "You can't access this account!!" };
+      } else {
+        const token = this.Jwt.createToken(travalerFound._id, "traveler");
+        return {
+          status: true,
+          token,
+          traveler,
+          message: `Welcome to Next-Trip Personal Account.`,
+        };
+      }
+    } else {
+      return { status: false, message: "Please create an account." };
+    }
+  }
 }
 
 export default TravelerUseCase;

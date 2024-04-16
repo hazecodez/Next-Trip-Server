@@ -2,9 +2,8 @@ import { sign, JwtPayload, verify } from "jsonwebtoken";
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
-import IJwt from "../../useCase/interface/IJwt";
 
-class Jwt implements IJwt {
+class Jwt {
   private secret: string;
   constructor() {
     this.secret = process.env.JWT_SECRET || "";
