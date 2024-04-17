@@ -68,6 +68,24 @@ class HostController {
       console.log(error);
     }
   }
+  async googleAuthLogin(req: Request, res: Response) {
+    try {
+      const response = await this.hostUseCase.googleAuthLogin(req.body);
+      if (response?.status) {
+        res
+          .cookie("hostToken", response.token, {
+            expires: new Date(Date.now() + 25892000000),
+            secure: true,
+          })
+          .status(200)
+          .json(response);
+      } else {
+        res.status(401).json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default HostController;

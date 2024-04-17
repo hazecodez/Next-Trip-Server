@@ -48,6 +48,21 @@ class TravelerRepo implements ITravelerRepo {
       console.log(error);
     }
   }
+//repository for save traveler's data login by googleAuth to DB
+  async saveGoogleUser(credential: any): Promise<traveler | undefined> {
+    try {
+      const saved = await travelerModel.create({
+        email: credential.email,
+        name: credential.name,
+        isVerified: true,
+        googleId: credential.sub
+      });
+      return saved;
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
 }
 
 export default TravelerRepo;

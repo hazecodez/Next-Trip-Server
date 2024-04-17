@@ -78,6 +78,25 @@ class TravelerController {
       console.log(error);
     }
   }
+
+  async googleAuthLogin(req: Request, res: Response) {
+    try {
+      const response = await this.travelerUseCase.googleAuthLogin(req.body);
+      if (response?.status) {
+        res
+          .cookie("travelerToken", response.token, {
+            expires: new Date(Date.now() + 25892000000),
+            secure: true,
+          })
+          .status(200)
+          .json(response);
+      } else {
+        res.status(401).json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default TravelerController;

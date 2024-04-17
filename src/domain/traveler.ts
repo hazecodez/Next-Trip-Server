@@ -8,6 +8,7 @@ interface traveler {
   image: string;
   wallet: number;
   walletHistory: Object[];
+  googleId: string;
 }
 
 export default traveler;

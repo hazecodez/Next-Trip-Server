@@ -20,7 +20,6 @@ const travelerSchema: Schema<traveler> = new Schema({
   },
   password: {
     type: String,
-    required: true,
   },
   image: {
     type: String,
@@ -29,6 +28,9 @@ const travelerSchema: Schema<traveler> = new Schema({
   wallet: {
     type: Number,
     default: 0,
+  },
+  googleId: {
+    type: String,
   },
 });
 

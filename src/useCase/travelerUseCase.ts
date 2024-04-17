@@ -117,6 +117,42 @@ class TravelerUseCase {
       return { status: false, message: "Please create an account." };
     }
   }
+
+  async googleAuthLogin(credential: any) {
+    try {
+      const { email } = credential;
+      const exist = await this.repository.findTravelerByEmail(email);
+      if (exist) {
+        if (exist.isBlocked) {
+          return {
+            status: false,
+            message: "You can't access this account!!",
+          };
+        } else {
+          const travelerData = await this.repository.fetchTravelerData(email);
+          const token = this.Jwt.createToken(travelerData?._id, "traveler");
+          return {
+            status: true,
+            travelerData,
+            message: "Welcome to Next-Trip Personal Account.",
+            token,
+          };
+        }
+      } else {
+        const traveler = await this.repository.saveGoogleUser(credential);
+        const token = this.Jwt.createToken(traveler?._id, "traveler");
+        const travelerData = await this.repository.fetchTravelerData(email);
+        return {
+          status: true,
+          travelerData,
+          message: "Welcome to Next-Trip Personal Account.",
+          token,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default TravelerUseCase;

@@ -36,5 +36,8 @@ router.post("/signup", (req, res) => {
 router.post("/login", (req, res) => {
   controller.HostLogin(req, res);
 });
+router.post("/google_login", (req, res) => {
+  controller.googleAuthLogin(req, res);
+});
 
 export default router;

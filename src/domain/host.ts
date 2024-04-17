@@ -9,6 +9,7 @@ interface host {
     image: string;
     wallet: number;
     walletHistory: Object[];
+    googleId: string;
 }
 
 export default host;

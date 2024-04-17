@@ -20,7 +20,6 @@ const hostSchema: Schema<host> = new Schema({
   },
   password: {
     type: String,
-    required: true,
   },
   identityImage: {
     type: String,
@@ -33,6 +32,9 @@ const hostSchema: Schema<host> = new Schema({
   wallet: {
     type: Number,
     default: 0,
+  },
+  googleId: {
+    type: String,
   },
 });
 

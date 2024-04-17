@@ -115,6 +115,41 @@ class HostUseCase {
       console.log(error);
     }
   }
+  async googleAuthLogin(credential: any) {
+    try {
+      const { email } = credential;
+      const exist = await this.repository.findHostByEmail(email);
+      if (exist) {
+        if (exist.isBlocked) {
+          return {
+            status: false,
+            message: "You can't access this account!!",
+          };
+        } else {
+          const hostData = await this.repository.fetchHostData(email);
+          const token = this.Jwt.createToken(hostData?._id, "host");
+          return {
+            status: true,
+            hostData,
+            token,
+            message: `Welcome to Next-Trip MyBIZ Account.`,
+          };
+        }
+      } else {
+        const host = await this.repository.saveGoogleUser(credential);
+        const token = this.Jwt.createToken(host?._id, "host");
+        const hostData = await this.repository.fetchHostData(email);
+        return {
+          status: true,
+          hostData,
+          message: "Welcome to Next-Trip MyBIZ Account.",
+          token,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default HostUseCase;

@@ -42,6 +42,19 @@ class HostRepo implements IHostRepo {
       console.log(error);
     }
   }
+  async saveGoogleUser(credential: any): Promise<host | undefined> {
+    try {
+      const saved = await hostModel.create({
+        email: credential.email,
+        name: credential.name,
+        isVerified: true,
+        googleId: credential.sub,
+      });
+      return saved;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default HostRepo;
