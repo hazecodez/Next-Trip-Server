@@ -72,5 +72,37 @@ class AdminUseCase {
       console.log(error);
     }
   }
+  async findTravelersList() {
+    try {
+      const travelersData = await this.adminRepo.findTravelersData();
+      return travelersData;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async blockOrUnblockTraveler(id: string) {
+    try {
+      const acted = await this.adminRepo.blockAndUnblockTraveler(id);
+      return acted;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async findHostsList() {
+    try {
+      const hostsData = await this.adminRepo.findHostsData();
+      return hostsData;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async blockOrUnblockHost(id: string) {
+    try {
+      const acted = await this.adminRepo.blockAndUnblockHost(id);
+      return acted;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 export default AdminUseCase;

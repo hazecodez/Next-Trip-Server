@@ -42,6 +42,52 @@ class AdminController {
       console.log(error);
     }
   }
+  async getTravelersList(req: Request, res: Response) {
+    try {
+      const travelers = await this.adminUseCase.findTravelersList();
+      if (travelers) {
+        res.status(200).json({ status: true, travelers });
+      } else {
+        res.json({ status: false, message: "Unable to fetch." });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async block_unblock_Traveler(req: Request, res: Response) {
+    try {
+      const { id } = req.body;
+      const response = await this.adminUseCase.blockOrUnblockTraveler(id);
+      if (response) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getHostsList(req: Request, res: Response) {
+    try {
+      const hosts = await this.adminUseCase.findHostsList();
+      if (hosts) {
+        res.status(200).json({ status: true, hosts });
+      } else {
+        res.json({ status: false, message: "Unable to fetch." });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async block_unblock_Host(req: Request, res: Response) {
+    try {
+      const { id } = req.body;
+      const response = await this.adminUseCase.blockOrUnblockHost(id);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default AdminController;
