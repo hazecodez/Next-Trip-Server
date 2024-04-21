@@ -54,6 +54,21 @@ class TravelerUseCase {
       throw error;
     }
   }
+  async resendOtp(token: string) {
+    try {
+      let decodeToken = this.Jwt.verifyToken(token);
+      if (decodeToken) {
+        let otp = this.generateOtp.generateOTP();
+        await this.sendMail.sendEmail(decodeToken.email, parseInt(otp));
+        await this.OtpRepo.createOtpCollection(decodeToken.email,otp);
+        return {status: true, message:`Otp re-sent to ${decodeToken.email}`}
+      } else {
+        return {status : false, message:"Something went wrong please re-register your account."}
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   async authentication(token: string, otp: string) {
     try {
@@ -61,7 +76,10 @@ class TravelerUseCase {
       if (decodeToken) {
         let fetchOtp = await this.OtpRepo.getOtp(decodeToken.email);
         if (fetchOtp) {
+          
           if (fetchOtp.otp === otp) {
+            
+            
             let travelerToken = this.Jwt.createToken(
               decodeToken._id,
               "traveler"
@@ -74,6 +92,7 @@ class TravelerUseCase {
               status: true,
               token: travelerToken,
               travelerData,
+              message: `Welcome ${travelerData?.name} to Next-Trip Website`
             };
           } else {
             return { status: false, message: "Invalid otp" };

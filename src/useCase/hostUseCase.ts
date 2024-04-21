@@ -53,6 +53,24 @@ class HostUseCase {
       console.log(error);
     }
   }
+  async resendOtp(token: string) {
+    try {
+      let decodeToken = this.Jwt.verifyToken(token);
+      if (decodeToken) {
+        const otp = this.generateOtp.generateOTP();
+        await this.sendMail.sendEmail(decodeToken.email, parseInt(otp));
+        await this.OtpRepo.createOtpCollection(decodeToken.email, otp);
+        return { status: true, message: `Otp re-sent to ${decodeToken.email}` };
+      } else {
+        return {
+          status: false,
+          message: "Something went wrong please re-register your account.",
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async authentication(token: string, otp: string) {
     try {
       let decodeToken = this.Jwt.verifyToken(token);

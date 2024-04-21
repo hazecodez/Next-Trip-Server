@@ -24,6 +24,19 @@ class HostController {
       console.log(error);
     }
   }
+  async ResendOtp(req: Request, res: Response) {
+    try {
+      const token = req.cookies.hostOtp;
+      const response = await this.hostUseCase.resendOtp(token);
+      if (response?.status) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   async AuthenticateHost(req: Request, res: Response) {
     try {

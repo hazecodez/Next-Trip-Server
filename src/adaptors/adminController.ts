@@ -83,7 +83,11 @@ class AdminController {
     try {
       const { id } = req.body;
       const response = await this.adminUseCase.blockOrUnblockHost(id);
-      return response;
+      if (response) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
+      }
     } catch (error) {
       console.log(error);
     }

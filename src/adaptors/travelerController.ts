@@ -27,6 +27,20 @@ class TravelerController {
       console.log(error);
     }
   }
+
+  async ResendOtp(req: Request, res: Response) {
+    try {
+      const token = req.cookies.travelerOtp;
+      const response = await this.travelerUseCase.resendOtp(token);
+      if (response?.status) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async AuthenticateTraveler(req: Request, res: Response) {
     try {
       let token = req.cookies.travelerOtp;
@@ -45,7 +59,7 @@ class TravelerController {
           .status(200)
           .json(response);
       } else {
-        res.status(401).json(response);
+        res.json(response);
       }
     } catch (error) {
       console.log(error);
