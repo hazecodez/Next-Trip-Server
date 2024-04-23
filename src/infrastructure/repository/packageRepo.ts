@@ -5,8 +5,8 @@ import packageModel from "../database/packageModel";
 class PackageRepo implements IPackageRepo {
   async savePackageData(
     data: Package,
-    images:string[],
-    hostId:string
+    images: string[],
+    hostId: string
   ): Promise<Boolean | undefined> {
     try {
       const {
@@ -50,10 +50,74 @@ class PackageRepo implements IPackageRepo {
         room_type,
         stay,
         images: images,
-        host: hostId
+        host: hostId,
       });
-      if(savedToDB) return true
+      if (savedToDB) return true;
       return false;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getPackagesById(id: string): Promise<Package[] | null | undefined> {
+    try {
+      const packages = await packageModel.find({ host: id, is_verified: true });
+      if (packages) {
+        return packages;
+      }
+      return null;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getAllPackages(): Promise<Package[] | null | undefined> {
+    try {
+      const packages = await packageModel.find({ is_verified: true });
+      if (packages) return packages;
+      return null;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getPackageDetails(id: string): Promise<Package | null | undefined> {
+    try {
+      const details = await packageModel.findOne({ _id: id });
+      return details;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async updatePackage(
+    data: Package,
+    images: string[] | undefined
+  ): Promise<Boolean | undefined> {
+    try {
+      const updated = await packageModel.findOneAndUpdate(
+        { _id: data._id },
+        {
+          activities: data.activities,
+          amenities: data.amenities,
+          arrival_airport: data.arrival_airport,
+          arrival_time: data.arrival_time,
+          book_end: data.book_end,
+          book_start: data.book_start,
+          capacity: data.capacity,
+          depa_airport: data.depa_airport,
+          depa_time: data.depa_time,
+          destination: data.destination,
+          dur_end: data.dur_end,
+          dur_start: data.dur_start,
+          food: data.food,
+          name: data.name,
+          itinerary: data.itinerary,
+          price: data.price,
+          room_type: data.room_type,
+          stay: data.stay,
+          is_verified:false,
+          images: images,
+        }
+      );
+      if(updated) return true
+      return false
     } catch (error) {
       console.log(error);
     }

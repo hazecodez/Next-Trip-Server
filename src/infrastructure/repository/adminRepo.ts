@@ -5,6 +5,8 @@ import travelerModel from "../database/travelerModel";
 import traveler from "../../domain/traveler";
 import hostModel from "../database/hostModel";
 import host from "../../domain/host";
+import packageModel from "../database/packageModel";
+import Package from "../../domain/package";
 
 class AdminRepo implements IAdminRepo {
   async findAdminByEmail(email: string): Promise<Admin | null | void> {
@@ -51,6 +53,31 @@ class AdminRepo implements IAdminRepo {
       return hosts;
     } catch (error) {
       console.log(error);
+    }
+  }
+  async findPackagesData(): Promise<Package[] | undefined> {
+    try {
+      const packages = await packageModel.find();
+      return packages;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async verifyPackage(id: string): Promise<boolean> {
+    try {
+      const packageData = await packageModel.findById(id);
+      if (!packageData?.is_verified) {
+        await packageModel.findOneAndUpdate({ _id: id }, { is_verified: true });
+      } else {
+        await packageModel.findOneAndUpdate(
+          { _id: id },
+          { is_verified: false }
+        );
+      }
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   }
   async blockAndUnblockHost(id: string): Promise<boolean> {

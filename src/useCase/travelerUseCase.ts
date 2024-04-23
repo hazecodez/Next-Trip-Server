@@ -9,6 +9,7 @@ import Bcrypt from "../infrastructure/utils/bcryption";
 import Jwt from "../infrastructure/utils/jwt";
 import jwt from "jsonwebtoken";
 import OtpRepository from "../infrastructure/repository/otpRepo";
+import PackageRepo from "../infrastructure/repository/packageRepo";
 
 class TravelerUseCase {
   constructor(
@@ -17,7 +18,8 @@ class TravelerUseCase {
     private sendMail: IMailer,
     private Jwt: Jwt,
     private bcryption: Bcrypt,
-    private OtpRepo: OtpRepository
+    private OtpRepo: OtpRepository,
+    private packageRepo: PackageRepo
   ) {
     this.repository = repository;
     this.generateOtp = generateOtp;
@@ -25,6 +27,7 @@ class TravelerUseCase {
     this.Jwt = Jwt;
     this.bcryption = bcryption;
     this.OtpRepo = OtpRepo;
+    this.packageRepo = packageRepo;
   }
   async signUpAndSendOtp(travelerData: traveler) {
     try {
@@ -54,16 +57,56 @@ class TravelerUseCase {
       throw error;
     }
   }
+  async forgetPassSendOTP(email: string) {
+    try {
+      const exist = await this.repository.fetchTravelerData(email);
+      if (exist) {
+        const otp = this.generateOtp.generateOTP();
+        await this.sendMail.sendEmail(email, parseInt(otp));
+        await this.OtpRepo.createOtpCollection(email, otp);
+        const token = this.Jwt.createToken(exist._id, "traveler");
+        return { status: true, message: `Otp re-sent to ${email}`, token };
+      } else {
+        return { status: false, message: `You don't have account.` };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async confirmForgetOTP(token: string, otp: string) {
+    try {
+      let decodeToken = this.Jwt.verifyToken(token);
+      const data = await this.repository.findTravelerById(decodeToken?.id);
+      if (decodeToken) {
+        let fetchOtp = await this.OtpRepo.getOtp(data?.email as string);
+
+        if (fetchOtp?.otp === otp) {
+          return {
+            status: true,
+          };
+        } else {
+          return { status: false, message: "Invalid otp" };
+        }
+      } else {
+        return { status: false, message: "OTP has been expired" };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async resendOtp(token: string) {
     try {
       let decodeToken = this.Jwt.verifyToken(token);
       if (decodeToken) {
         let otp = this.generateOtp.generateOTP();
         await this.sendMail.sendEmail(decodeToken.email, parseInt(otp));
-        await this.OtpRepo.createOtpCollection(decodeToken.email,otp);
-        return {status: true, message:`Otp re-sent to ${decodeToken.email}`}
+        await this.OtpRepo.createOtpCollection(decodeToken.email, otp);
+        return { status: true, message: `Otp re-sent to ${decodeToken.email}` };
       } else {
-        return {status : false, message:"Something went wrong please re-register your account."}
+        return {
+          status: false,
+          message: "Something went wrong please re-register your account.",
+        };
       }
     } catch (error) {
       console.log(error);
@@ -76,10 +119,7 @@ class TravelerUseCase {
       if (decodeToken) {
         let fetchOtp = await this.OtpRepo.getOtp(decodeToken.email);
         if (fetchOtp) {
-          
           if (fetchOtp.otp === otp) {
-            
-            
             let travelerToken = this.Jwt.createToken(
               decodeToken._id,
               "traveler"
@@ -92,7 +132,7 @@ class TravelerUseCase {
               status: true,
               token: travelerToken,
               travelerData,
-              message: `Welcome ${travelerData?.name} to Next-Trip Website`
+              message: `Welcome ${travelerData?.name} to Next-Trip Website`,
             };
           } else {
             return { status: false, message: "Invalid otp" };
@@ -166,6 +206,47 @@ class TravelerUseCase {
           travelerData,
           message: "Welcome to Next-Trip Personal Account.",
           token,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async fetchAllPackages() {
+    try {
+      const response = await this.packageRepo.getAllPackages();
+      if (response) {
+        return {
+          status: true,
+          packages: response,
+        };
+      } else {
+        return {
+          status: false,
+          message: "No packages is available.",
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async upadateTravelerPassword(token: string, password: string) {
+    try {
+      let decodeToken = this.Jwt.verifyToken(token);
+      const hashedPass = await this.bcryption.Bcryption(password);
+      const response = await this.repository.updateTravelerPassword(
+        decodeToken?.id,
+        hashedPass ? hashedPass : ""
+      );
+      if (response) {
+        return {
+          status: true,
+          message: `Successfully updated your password`,
+        };
+      } else {
+        return {
+          status: false,
+          message: `Oops! something went wrong.`,
         };
       }
     } catch (error) {

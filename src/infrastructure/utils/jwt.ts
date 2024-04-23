@@ -21,8 +21,6 @@ class Jwt {
   verifyToken(token: string): JwtPayload | null {
     try {
       const decoded = verify(token, this.secret) as JwtPayload;
-      console.log(this.secret);
-      
       return decoded;
     } catch (error) {
       console.log("Error occured when verifying JWT token");

@@ -52,5 +52,23 @@ router.post("/google_login", (req, res) => {
 router.post("/create_package", (req, res) => {
   packageController.createPackage(req, res);
 });
+router.get("/package_list", (req, res) =>
+  packageController.getPackageListByHost(req, res)
+);
+router.patch("/package_details", (req, res) =>
+  packageController.fetchPackageDetails(req, res)
+);
+router.patch("/update_package", (req, res) =>
+  packageController.UpdatePackage(req, res)
+);
+router.patch("/forget_pass", (req, res) =>
+  controller.forgetPassSendOTP(req, res)
+);
+router.post("/confirm_forget_otp", (req, res) =>
+  controller.confirmForgetOTP(req, res)
+);
+router.post("/new_password", (req, res) =>
+  controller.upadateHostPassword(req, res)
+);
 
 export default router;

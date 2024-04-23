@@ -111,6 +111,72 @@ class TravelerController {
       console.log(error);
     }
   }
+  async fetchAllPackages(req: Request, res: Response) {
+    try {
+      const response = await this.travelerUseCase.fetchAllPackages();
+      if (response?.status) {
+        res.status(200).json(response);
+      } else {
+        res.status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async forgetPassSendOTP(req: Request, res: Response) {
+    try {
+      const email = req.body.email;
+
+      const response = await this.travelerUseCase.forgetPassSendOTP(email);
+      if (response?.status) {
+        res
+          .cookie("forget", response.token, {
+            expires: new Date(Date.now() + 25892000000),
+            secure: true,
+          })
+          .status(200)
+          .json(response);
+      } else {
+        res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async confirmForgetOTP(req: Request, res: Response) {
+    try {
+      const token = req.cookies.forget;
+      const response = await this.travelerUseCase.confirmForgetOTP(
+        token,
+        req.body.otp
+      );
+      if (response?.status) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async upadateTravelerPassword(req: Request, res: Response) {
+    try {
+      const token = req.cookies.forget;
+      console.log(token);
+      
+      const response = await this.travelerUseCase.upadateTravelerPassword(
+        token,
+        req.body.password
+      );
+      if (response?.status) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default TravelerController;

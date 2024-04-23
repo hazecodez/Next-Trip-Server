@@ -37,6 +37,50 @@ class PackageUseCase {
       throw new Error("Failed to create package. Please try again.");
     }
   }
+
+  async updatePackage(form: Package, images: string[]) {
+    try {
+      const imageFiles = await uploadFiles(images, "Packages");
+      const updated = await this.repository.updatePackage(form, imageFiles);
+      if (updated) {
+        return {
+          status: true,
+          message:
+            "Package updated successfully, wait for the verification by admin.",
+        };
+      } else {
+        return {
+          status: false,
+          message: "Oops!! Something went wrong. try again.",
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getPackagesByHost(token: string) {
+    try {
+      const decodeToken = this.Jwt.verifyToken(token);
+      if (decodeToken) {
+        const packageList = await this.repository.getPackagesById(
+          decodeToken.id
+        );
+        return packageList;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getPackageDetails(id: string) {
+    try {
+      const details = await this.repository.getPackageDetails(id);
+      return details;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default PackageUseCase;

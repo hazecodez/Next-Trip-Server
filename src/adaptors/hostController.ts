@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, response } from "express";
 import HostUseCase from "../useCase/hostUseCase";
 class HostController {
   private hostUseCase: HostUseCase;
@@ -94,6 +94,58 @@ class HostController {
           .json(response);
       } else {
         res.status(401).json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async forgetPassSendOTP(req: Request, res: Response) {
+    try {
+      const email = req.body.email;
+      const response = await this.hostUseCase.forgetPassSendOTP(email);
+      if (response?.status) {
+        res
+          .cookie("forget", response.token, {
+            expires: new Date(Date.now() + 25892000000),
+            secure: true,
+          })
+          .status(200)
+          .json(response);
+      } else {
+        res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async confirmForgetOTP(req: Request, res: Response) {
+    try {
+      const token = req.cookies.forget;
+
+      const response = await this.hostUseCase.confirmForgetOTP(
+        token,
+        req.body.otp
+      );
+      if (response?.status) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async upadateHostPassword(req: Request, res: Response) {
+    try {
+      const token = req.cookies.forget;
+      const response = await this.hostUseCase.upadateHostPassword(
+        token,
+        req.body.password
+      );
+      if (response?.status) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
       }
     } catch (error) {
       console.log(error);

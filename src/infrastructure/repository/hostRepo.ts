@@ -11,6 +11,14 @@ class HostRepo implements IHostRepo {
       console.log(error);
     }
   }
+  async findHostById(id: string): Promise<host | null | undefined> {
+    try {
+      const data = await hostModel.findById(id);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   async saveHostToDB(host: host): Promise<void | host | null> {
     try {
@@ -51,6 +59,21 @@ class HostRepo implements IHostRepo {
         googleId: credential.sub,
       });
       return saved;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async updateHostPassword(
+    id: string,
+    password: string
+  ): Promise<Boolean | undefined> {
+    try {
+      const updated = await hostModel.findOneAndUpdate(
+        { _id: id },
+        { password: password }
+      );
+      if (updated) return true;
+      return false;
     } catch (error) {
       console.log(error);
     }

@@ -1,4 +1,5 @@
 interface Package {
+  _id:string
   name: string;
   capacity: number;
   destination: string;
@@ -19,6 +20,7 @@ interface Package {
   itinerary: string;
   images: string[];
   host: string;
+  is_verified: boolean;
 }
 
 export default Package;

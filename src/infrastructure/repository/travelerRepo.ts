@@ -15,6 +15,15 @@ class TravelerRepo implements ITravelerRepo {
     }
   }
 
+  async findTravelerById(id: string): Promise<traveler | null | undefined> {
+    try {
+      const data = await travelerModel.findById(id);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   //repository for saving traveler data to DB
 
   async saveTravelerToDB(traveler: traveler): Promise<void | traveler | null> {
@@ -36,7 +45,7 @@ class TravelerRepo implements ITravelerRepo {
       { isVerified: true }
     );
   }
-//repository for finding traveler's specified data from DB
+  //repository for finding traveler's specified data from DB
   async fetchTravelerData(email: string): Promise<void | traveler | null> {
     try {
       const travaler = await travelerModel.findOne(
@@ -48,19 +57,33 @@ class TravelerRepo implements ITravelerRepo {
       console.log(error);
     }
   }
-//repository for save traveler's data login by googleAuth to DB
+  //repository for save traveler's data login by googleAuth to DB
   async saveGoogleUser(credential: any): Promise<traveler | undefined> {
     try {
       const saved = await travelerModel.create({
         email: credential.email,
         name: credential.name,
         isVerified: true,
-        googleId: credential.sub
+        googleId: credential.sub,
       });
       return saved;
     } catch (error) {
       console.log(error);
-      
+    }
+  }
+  async updateTravelerPassword(
+    id: string,
+    password: string
+  ): Promise<Boolean | undefined> {
+    try {
+      const updated = await travelerModel.findOneAndUpdate(
+        { _id: id },
+        { password: password }
+      );
+      if (updated) return true;
+      return false;
+    } catch (error) {
+      console.log(error);
     }
   }
 }

@@ -54,6 +54,31 @@ class AdminController {
       console.log(error);
     }
   }
+  async getPackagesList(req: Request, res: Response) {
+    try {
+      const packages = await this.adminUseCase.packagesList();
+      if (packages) {
+        res.status(200).json({ status: true, packages });
+      } else {
+        res.status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async package_Actions(req: Request, res: Response) {
+    try {
+      const { id } = req.body;
+      const response = await this.adminUseCase.packageActions(id);
+      if (response) {
+        res.status(200).json({status:true,response});
+      } else {
+        res.status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async block_unblock_Traveler(req: Request, res: Response) {
     try {
       const { id } = req.body;

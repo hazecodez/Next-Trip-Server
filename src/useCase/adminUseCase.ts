@@ -1,4 +1,6 @@
 import AdminRepo from "../infrastructure/repository/adminRepo";
+import PackageRepo from "../infrastructure/repository/packageRepo";
+
 import Admin from "../domain/admin";
 import Jwt from "../infrastructure/utils/jwt";
 import Bcrypt from "../infrastructure/utils/bcryption";
@@ -7,11 +9,13 @@ class AdminUseCase {
   constructor(
     private adminRepo: AdminRepo,
     private jwt: Jwt,
-    private bcrypt: Bcrypt
+    private bcrypt: Bcrypt,
+    private packageRepo: PackageRepo
   ) {
     this.bcrypt = bcrypt;
     this.jwt = jwt;
     this.adminRepo = adminRepo;
+    this.packageRepo = packageRepo;
   }
   async adminLogin(loginData: Admin) {
     try {
@@ -102,6 +106,24 @@ class AdminUseCase {
       return acted;
     } catch (error) {
       console.log(error);
+    }
+  }
+  async packagesList () {
+    try {
+      const packagesData = await this.adminRepo.findPackagesData();
+      return packagesData;
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+  async packageActions(id:string) {
+    try {
+      const acted = await this.adminRepo.verifyPackage(id);
+      return acted;
+    } catch (error) {
+      console.log(error);
+      
     }
   }
 }

@@ -168,6 +168,68 @@ class HostUseCase {
       console.log(error);
     }
   }
+  async forgetPassSendOTP(email: string) {
+    try {
+      const exist = await this.repository.fetchHostData(email);
+      if (exist) {
+        const otp = this.generateOtp.generateOTP();
+        await this.sendMail.sendEmail(email, parseInt(otp));
+        await this.OtpRepo.createOtpCollection(email, otp);
+        const token = this.Jwt.createToken(exist._id, "host");
+        return { status: true, message: `Otp re-sent to ${email}`, token };
+      } else {
+        return { status: false, message: `You don't have account.` };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async confirmForgetOTP(token: string, otp: string) {
+    try {
+      let decodeToken = this.Jwt.verifyToken(token);
+      const data = await this.repository.findHostById(decodeToken?.id);
+      
+
+      if (decodeToken) {
+        let fetchOtp = await this.OtpRepo.getOtp(data?.email as string);
+
+        if (fetchOtp?.otp === otp) {
+          return {
+            status: true,
+          };
+        } else {
+          return { status: false, message: "Invalid otp" };
+        }
+      } else {
+        return { status: false, message: "OTP has been expired" };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async upadateHostPassword(token: string, password: string) {
+    try {
+      let decodeToken = this.Jwt.verifyToken(token);
+      const hashedPass = await this.bcryption.Bcryption(password);
+      const response = await this.repository.updateHostPassword(
+        decodeToken?.id,
+        hashedPass ? hashedPass : ""
+      );
+      if (response) {
+        return {
+          status: true,
+          message: `Successfully updated your password`,
+        };
+      } else {
+        return {
+          status: false,
+          message: `Oops! something went wrong.`,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default HostUseCase;

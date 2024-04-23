@@ -7,6 +7,7 @@ import Jwt from "../utils/jwt";
 import Bcrypt from "../utils/bcryption";
 import OtpRepository from "../repository/otpRepo";
 import NodeMailer from "../utils/email";
+import PackageRepo from "../repository/packageRepo";
 
 let generateOTP = new GenerateOTP();
 let repository = new TravelerRepo();
@@ -14,6 +15,7 @@ let jwt = new Jwt();
 let bcrypt = new Bcrypt();
 let sendMail = new NodeMailer();
 let OtpRepo = new OtpRepository();
+let packageRepo = new PackageRepo();
 
 let travelerUseCase = new TravelerUseCase(
   repository,
@@ -21,7 +23,8 @@ let travelerUseCase = new TravelerUseCase(
   sendMail,
   jwt,
   bcrypt,
-  OtpRepo
+  OtpRepo,
+  packageRepo
 );
 
 let controller = new TravelerController(travelerUseCase);
@@ -42,5 +45,17 @@ router.post("/login", (req, res) => {
 router.post("/google_login", (req, res) => {
   controller.googleAuthLogin(req, res);
 });
+router.get("/package_list", (req, res) =>
+  controller.fetchAllPackages(req, res)
+);
+router.patch("/forget_pass", (req, res) =>
+  controller.forgetPassSendOTP(req, res)
+);
+router.post("/confirm_forget_otp", (req, res) =>
+  controller.confirmForgetOTP(req, res)
+);
+router.post("/new_password", (req, res) =>
+  controller.upadateTravelerPassword(req, res)
+);
 
 export default router;

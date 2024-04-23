@@ -79,6 +79,10 @@ const packageShema: Schema<Package> = new Schema({
     ref: "host",
     required: true,
   },
+  is_verified:{
+    type: Boolean,
+    default: false,
+  }
 });
 
 const packageModel = model<Package>("package", packageShema);
