@@ -31,6 +31,8 @@ class TravelerUseCase {
   }
   async signUpAndSendOtp(travelerData: traveler) {
     try {
+      
+      
       const travelerFound = await this.repository.findTravelerByEmail(
         travelerData.email
       );
@@ -119,7 +121,7 @@ class TravelerUseCase {
       if (decodeToken) {
         let fetchOtp = await this.OtpRepo.getOtp(decodeToken.email);
         if (fetchOtp) {
-          if (fetchOtp.otp === otp) {
+          if (fetchOtp?.otp === otp) {
             let travelerToken = this.Jwt.createToken(
               decodeToken._id,
               "traveler"

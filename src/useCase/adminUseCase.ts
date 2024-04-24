@@ -5,7 +5,7 @@ import Admin from "../domain/admin";
 import Jwt from "../infrastructure/utils/jwt";
 import Bcrypt from "../infrastructure/utils/bcryption";
 
-class AdminUseCase {
+class AdminUseCase  {
   constructor(
     private adminRepo: AdminRepo,
     private jwt: Jwt,
