@@ -1,6 +1,8 @@
-import { Request, Response, response } from "express";
+import { Request, Response } from "express";
 import HostUseCase from "../useCase/hostUseCase";
-class HostController {
+import IHostController from "../useCase/interface/IHostCon";
+
+class HostController implements IHostController {
   private hostUseCase: HostUseCase;
   constructor(hostUseCase: HostUseCase) {
     this.hostUseCase = hostUseCase;
@@ -18,7 +20,7 @@ class HostController {
           .status(200)
           .json(signUpResponse);
       } else {
-        res.status(401).json(signUpResponse);
+        res.json(signUpResponse);
       }
     } catch (error) {
       console.log(error);
@@ -40,42 +42,39 @@ class HostController {
 
   async AuthenticateHost(req: Request, res: Response) {
     try {
-      let token = req.cookies.hostOtp;
-      let response = await this.hostUseCase.authentication(token, req.body.otp);
+      const token = req.cookies.hostOtp;
+      const response = await this.hostUseCase.authentication(
+        token,
+        req.body.otp
+      );
       if (response?.status) {
-        res
-          .cookie("host", response.token, {
-            expires: new Date(Date.now() + 25892000000),
-            secure: true,
-          })
-          .status(200)
-          .json(response);
+        res.status(200).json(response);
       } else {
-        res.status(401).json(response);
+        res.json(response).status(401);
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  async HostLogin(req: Request, res: Response) {
+  async Host_Login(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
       const verifiedHost = await this.hostUseCase.Login(email, password);
       if (verifiedHost && verifiedHost.status) {
-        if (verifiedHost.status) {
-          return res
-            .cookie("hostToken", verifiedHost.token, {
+        if (verifiedHost?.status) {
+          res
+            .cookie("host", verifiedHost.token, {
               expires: new Date(Date.now() + 25892000000),
               secure: true,
             })
             .status(200)
             .json({ verifiedHost });
         } else {
-          res.status(401).json(verifiedHost);
+          res.json(verifiedHost).status(401);
         }
       } else {
-        res.json({ verifiedHost });
+        res.json({ verifiedHost }).status(401);
       }
     } catch (error) {
       console.log(error);
@@ -85,15 +84,19 @@ class HostController {
     try {
       const response = await this.hostUseCase.googleAuthLogin(req.body);
       if (response?.status) {
-        res
-          .cookie("hostToken", response.token, {
-            expires: new Date(Date.now() + 25892000000),
-            secure: true,
-          })
-          .status(200)
-          .json(response);
+        if (response.token) {
+          res
+            .cookie("host", response.token, {
+              expires: new Date(Date.now() + 25892000000),
+              secure: true,
+            })
+            .status(200)
+            .json(response);
+        } else {
+          res.json(response).status(401);
+        }
       } else {
-        res.status(401).json(response);
+        res.json(response).status(401);
       }
     } catch (error) {
       console.log(error);
@@ -129,13 +132,13 @@ class HostController {
       if (response?.status) {
         res.status(200).json(response);
       } else {
-        res.json(response);
+        res.json(response).status(401);
       }
     } catch (error) {
       console.log(error);
     }
   }
-  async upadateHostPassword(req: Request, res: Response) {
+  async updateHostPassword(req: Request, res: Response) {
     try {
       const token = req.cookies.forget;
       const response = await this.hostUseCase.upadateHostPassword(
@@ -145,7 +148,7 @@ class HostController {
       if (response?.status) {
         res.status(200).json(response);
       } else {
-        res.json(response);
+        res.json(response).status(500);
       }
     } catch (error) {
       console.log(error);

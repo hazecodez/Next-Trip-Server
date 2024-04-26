@@ -1,7 +1,8 @@
 import AdminUseCase from "../useCase/adminUseCase";
 import { Request, Response } from "express";
+import IAdminController from "../useCase/interface/IAdminCon";
 
-class AdminController {
+class AdminController implements IAdminController {
   constructor(private adminUseCase: AdminUseCase) {
     this.adminUseCase = adminUseCase;
   }
@@ -36,7 +37,7 @@ class AdminController {
           .status(200)
           .json(response);
       } else {
-        res.json(response);
+        res.json(response).status(401);
       }
     } catch (error) {
       console.log(error);
@@ -71,7 +72,7 @@ class AdminController {
       const { id } = req.body;
       const response = await this.adminUseCase.packageActions(id);
       if (response) {
-        res.status(200).json({status:true,response});
+        res.status(200).json({ status: true, response });
       } else {
         res.status(500);
       }

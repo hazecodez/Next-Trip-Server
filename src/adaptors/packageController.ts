@@ -1,7 +1,8 @@
 import PackageUseCase from "../useCase/packageUseCase";
 import { Request, Response } from "express";
+import IPackageController from "../useCase/interface/IPackageCon";
 
-class PackageController {
+class PackageController implements IPackageController {
   private packageUseCase: PackageUseCase;
   constructor(packageUseCase: PackageUseCase) {
     this.packageUseCase = packageUseCase;
@@ -10,7 +11,7 @@ class PackageController {
     try {
       const formData = req.body.form;
       const images = req.body.images;
-      const host = req.cookies.hostToken as string;
+      const host = req.cookies.host as string;
 
       const response = await this.packageUseCase.createPackage(
         formData,
@@ -29,7 +30,7 @@ class PackageController {
 
   async getPackageListByHost(req: Request, res: Response) {
     try {
-      const token = req.cookies.hostToken as string;
+      const token = req.cookies.host as string;
       const response = await this.packageUseCase.getPackagesByHost(token);
       if (response) {
         res.status(200).json({ packageList: response });
@@ -63,6 +64,18 @@ class PackageController {
         res.status(200).json(response);
       } else {
         res.status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async fetchAllPackages(req: Request, res: Response) {
+    try {
+      const response = await this.packageUseCase.fetchAllPackages();
+      if (response?.status) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
       }
     } catch (error) {
       console.log(error);

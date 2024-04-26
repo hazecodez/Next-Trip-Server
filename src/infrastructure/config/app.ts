@@ -1,4 +1,4 @@
-import express, { urlencoded } from "express";
+import express from "express";
 import cors from "cors";
 import travelerRoute from "../routes/travelerRoute";
 import hostRoute from "../routes/hostRoute";
@@ -8,7 +8,6 @@ import cookieParser from "cookie-parser";
 export const createServer = () => {
   try {
     const app = express();
-    // app.use(express.json());
     app.use(express.json({ limit: "50mb" }));
     app.use(express.urlencoded({ limit: "50mb", extended: true }));
     app.use(cookieParser());

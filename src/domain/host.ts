@@ -4,6 +4,7 @@ interface host {
     email: string;
     password: string;
     isVerified: boolean;
+    emailVerified:boolean;
     isBlocked: boolean;
     identityImage: string;
     image: string;

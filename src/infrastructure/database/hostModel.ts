@@ -18,6 +18,10 @@ const hostSchema: Schema<host> = new Schema({
     type: Boolean,
     default: false,
   },
+  emailVerified: {
+    type: Boolean,
+    default: false,
+  },
   password: {
     type: String,
   },

@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import TravelerUseCase from "../useCase/travelerUseCase";
+import ITravelerController from "../useCase/interface/ITravelerCon";
 
-class TravelerController {
+class TravelerController implements ITravelerController{
   private travelerUseCase: TravelerUseCase;
   constructor(travelerUseCase: TravelerUseCase) {
     this.travelerUseCase = travelerUseCase;
@@ -9,7 +10,7 @@ class TravelerController {
 
   async SignUpAndSendOtp(req: Request, res: Response) {
     try {
-      let signUpResponse = await this.travelerUseCase.signUpAndSendOtp(
+      const signUpResponse = await this.travelerUseCase.signUpAndSendOtp(
         req.body
       );
       if (signUpResponse.status) {
@@ -21,7 +22,7 @@ class TravelerController {
           .status(200)
           .json(signUpResponse);
       } else {
-        res.status(401).json(signUpResponse);
+        res.json(signUpResponse);
       }
     } catch (error) {
       console.log(error);
@@ -43,9 +44,9 @@ class TravelerController {
   }
   async AuthenticateTraveler(req: Request, res: Response) {
     try {
-      let token = req.cookies.travelerOtp;
+      const token = req.cookies.travelerOtp;
 
-      let response = await this.travelerUseCase.authentication(
+      const response = await this.travelerUseCase.authentication(
         token,
         req.body.otp
       );
@@ -76,14 +77,14 @@ class TravelerController {
       if (verifiedTraveler && verifiedTraveler.status) {
         if (verifiedTraveler.status) {
           return res
-            .cookie("travelerToken", verifiedTraveler.token, {
+            .cookie("traveler", verifiedTraveler.token, {
               expires: new Date(Date.now() + 25892000000),
               secure: true,
             })
             .status(200)
             .json({ verifiedTraveler });
         } else {
-          res.status(401).json(verifiedTraveler);
+          res.json(verifiedTraveler);
         }
       } else {
         res.json({ verifiedTraveler });
@@ -98,31 +99,20 @@ class TravelerController {
       const response = await this.travelerUseCase.googleAuthLogin(req.body);
       if (response?.status) {
         res
-          .cookie("travelerToken", response.token, {
+          .cookie("traveler", response.token, {
             expires: new Date(Date.now() + 25892000000),
             secure: true,
           })
           .status(200)
           .json(response);
       } else {
-        res.status(401).json(response);
+        res.json(response);
       }
     } catch (error) {
       console.log(error);
     }
   }
-  async fetchAllPackages(req: Request, res: Response) {
-    try {
-      const response = await this.travelerUseCase.fetchAllPackages();
-      if (response?.status) {
-        res.status(200).json(response);
-      } else {
-        res.status(500);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
   async forgetPassSendOTP(req: Request, res: Response) {
     try {
       const email = req.body.email;
@@ -162,8 +152,7 @@ class TravelerController {
   async upadateTravelerPassword(req: Request, res: Response) {
     try {
       const token = req.cookies.forget;
-      console.log(token);
-      
+
       const response = await this.travelerUseCase.upadateTravelerPassword(
         token,
         req.body.password

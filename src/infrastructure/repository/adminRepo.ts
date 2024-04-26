@@ -55,14 +55,7 @@ class AdminRepo implements IAdminRepo {
       console.log(error);
     }
   }
-  async findPackagesData(): Promise<Package[] | undefined> {
-    try {
-      const packages = await packageModel.find();
-      return packages;
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
   async verifyPackage(id: string): Promise<boolean> {
     try {
       const packageData = await packageModel.findById(id);

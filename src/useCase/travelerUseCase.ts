@@ -1,5 +1,6 @@
 import traveler from "../domain/traveler";
 import ITravelerRepo from "./interface/ITravelerRepo";
+import ITravelerUseCase from "./interface/ITravelerUseCase";
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config({ path: path.resolve(__dirname, ".env") });
@@ -9,17 +10,15 @@ import Bcrypt from "../infrastructure/utils/bcryption";
 import Jwt from "../infrastructure/utils/jwt";
 import jwt from "jsonwebtoken";
 import OtpRepository from "../infrastructure/repository/otpRepo";
-import PackageRepo from "../infrastructure/repository/packageRepo";
 
-class TravelerUseCase {
+class TravelerUseCase implements ITravelerUseCase {
   constructor(
     private repository: ITravelerRepo,
     private generateOtp: GenerateOTP,
     private sendMail: IMailer,
     private Jwt: Jwt,
     private bcryption: Bcrypt,
-    private OtpRepo: OtpRepository,
-    private packageRepo: PackageRepo
+    private OtpRepo: OtpRepository
   ) {
     this.repository = repository;
     this.generateOtp = generateOtp;
@@ -27,29 +26,26 @@ class TravelerUseCase {
     this.Jwt = Jwt;
     this.bcryption = bcryption;
     this.OtpRepo = OtpRepo;
-    this.packageRepo = packageRepo;
   }
   async signUpAndSendOtp(travelerData: traveler) {
     try {
-      
-      
       const travelerFound = await this.repository.findTravelerByEmail(
         travelerData.email
       );
       if (travelerFound) {
         return { status: false, message: "User already exist." };
       } else {
-        let payload: { email: string; role: string } = {
+        const payload: { email: string; role: string } = {
           email: travelerData.email,
           role: "traveler",
         };
-        let otp = this.generateOtp.generateOTP();
+        const otp = this.generateOtp.generateOTP();
         this.sendMail.sendEmail(travelerData.email, parseInt(otp));
-        let jwtToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
+        const jwtToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
           expiresIn: "1m",
         });
         this.OtpRepo.createOtpCollection(travelerData.email, otp);
-        let hashed = await this.bcryption.Bcryption(travelerData.password);
+        const hashed = await this.bcryption.Bcryption(travelerData.password);
         hashed ? (travelerData.password = hashed) : "";
 
         await this.repository.saveTravelerToDB(travelerData);
@@ -59,74 +55,19 @@ class TravelerUseCase {
       throw error;
     }
   }
-  async forgetPassSendOTP(email: string) {
-    try {
-      const exist = await this.repository.fetchTravelerData(email);
-      if (exist) {
-        const otp = this.generateOtp.generateOTP();
-        await this.sendMail.sendEmail(email, parseInt(otp));
-        await this.OtpRepo.createOtpCollection(email, otp);
-        const token = this.Jwt.createToken(exist._id, "traveler");
-        return { status: true, message: `Otp re-sent to ${email}`, token };
-      } else {
-        return { status: false, message: `You don't have account.` };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  async confirmForgetOTP(token: string, otp: string) {
-    try {
-      let decodeToken = this.Jwt.verifyToken(token);
-      const data = await this.repository.findTravelerById(decodeToken?.id);
-      if (decodeToken) {
-        let fetchOtp = await this.OtpRepo.getOtp(data?.email as string);
-
-        if (fetchOtp?.otp === otp) {
-          return {
-            status: true,
-          };
-        } else {
-          return { status: false, message: "Invalid otp" };
-        }
-      } else {
-        return { status: false, message: "OTP has been expired" };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  async resendOtp(token: string) {
-    try {
-      let decodeToken = this.Jwt.verifyToken(token);
-      if (decodeToken) {
-        let otp = this.generateOtp.generateOTP();
-        await this.sendMail.sendEmail(decodeToken.email, parseInt(otp));
-        await this.OtpRepo.createOtpCollection(decodeToken.email, otp);
-        return { status: true, message: `Otp re-sent to ${decodeToken.email}` };
-      } else {
-        return {
-          status: false,
-          message: "Something went wrong please re-register your account.",
-        };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async authentication(token: string, otp: string) {
     try {
-      let decodeToken = this.Jwt.verifyToken(token);
+      const decodeToken = this.Jwt.verifyToken(token);
       if (decodeToken) {
-        let fetchOtp = await this.OtpRepo.getOtp(decodeToken.email);
+        const fetchOtp = await this.OtpRepo.getOtp(decodeToken.email);
         if (fetchOtp) {
           if (fetchOtp?.otp === otp) {
-            let travelerToken = this.Jwt.createToken(
+            const travelerToken = this.Jwt.createToken(
               decodeToken._id,
               "traveler"
             );
-            let travelerData = await this.repository.fetchTravelerData(
+            const travelerData = await this.repository.fetchTravelerData(
               decodeToken.email
             );
             await this.repository.verifyTraveler(decodeToken.email);
@@ -148,8 +89,65 @@ class TravelerUseCase {
     }
   }
 
+  async forgetPassSendOTP(email: string) {
+    try {
+      const exist = await this.repository.fetchTravelerData(email);
+      if (exist) {
+        const otp = this.generateOtp.generateOTP();
+        await this.sendMail.sendEmail(email, parseInt(otp));
+        await this.OtpRepo.createOtpCollection(email, otp);
+        const token = this.Jwt.createToken(exist._id, "travelerForget");
+        return { status: true, message: `Otp re-sent to ${email}`, token };
+      } else {
+        return { status: false, message: `You don't have account.` };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async confirmForgetOTP(token: string, otp: string) {
+    try {
+      const decodeToken = this.Jwt.verifyToken(token);
+      const data = await this.repository.findTravelerById(decodeToken?.id);
+      if (decodeToken) {
+        const fetchOtp = await this.OtpRepo.getOtp(data?.email as string);
+
+        if (fetchOtp?.otp === otp) {
+          return {
+            status: true,
+            message: `You can update your password now.`,
+          };
+        } else {
+          return { status: false, message: "Invalid otp" };
+        }
+      } else {
+        return { status: false, message: "OTP has been expired" };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async resendOtp(token: string) {
+    try {
+      const decodeToken = this.Jwt.verifyToken(token);
+      if (decodeToken) {
+        const otp = this.generateOtp.generateOTP();
+        await this.sendMail.sendEmail(decodeToken.email, parseInt(otp));
+        await this.OtpRepo.createOtpCollection(decodeToken.email, otp);
+        return { status: true, message: `Otp re-sent to ${decodeToken.email}` };
+      } else {
+        return {
+          status: false,
+          message: "Something went wrong please re-register your account.",
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async Login(email: string, password: string) {
-    let travalerFound = await this.repository.findTravelerByEmail(email);
+    const travalerFound = await this.repository.findTravelerByEmail(email);
 
     if (travalerFound) {
       const traveler = await this.repository.fetchTravelerData(email);
@@ -214,27 +212,10 @@ class TravelerUseCase {
       console.log(error);
     }
   }
-  async fetchAllPackages() {
-    try {
-      const response = await this.packageRepo.getAllPackages();
-      if (response) {
-        return {
-          status: true,
-          packages: response,
-        };
-      } else {
-        return {
-          status: false,
-          message: "No packages is available.",
-        };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
   async upadateTravelerPassword(token: string, password: string) {
     try {
-      let decodeToken = this.Jwt.verifyToken(token);
+      const decodeToken = this.Jwt.verifyToken(token);
       const hashedPass = await this.bcryption.Bcryption(password);
       const response = await this.repository.updateTravelerPassword(
         decodeToken?.id,

@@ -9,8 +9,9 @@ import Bcrypt from "../infrastructure/utils/bcryption";
 import Jwt from "../infrastructure/utils/jwt";
 import jwt from "jsonwebtoken";
 import OtpRepository from "../infrastructure/repository/otpRepo";
+import IHostUseCase from "./interface/IHostUseCase";
 
-class HostUseCase {
+class HostUseCase implements IHostUseCase {
   constructor(
     private repository: IHostRepo,
     private generateOtp: GenerateOTP,
@@ -33,17 +34,17 @@ class HostUseCase {
       if (hostFound) {
         return { status: false, message: "Host already exist." };
       } else {
-        let payload: { email: string; role: string } = {
+        const payload: { email: string; role: string } = {
           email: hostData.email,
           role: "host",
         };
-        let otp = this.generateOtp.generateOTP();
+        const otp = this.generateOtp.generateOTP();
         this.sendMail.sendEmail(hostData.email, parseInt(otp));
-        let jwtToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
+        const jwtToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
           expiresIn: "1m",
         });
         this.OtpRepo.createOtpCollection(hostData.email, otp);
-        let hashed = await this.bcryption.Bcryption(hostData.password);
+        const hashed = await this.bcryption.Bcryption(hostData.password);
         hashed ? (hostData.password = hashed) : "";
 
         await this.repository.saveHostToDB(hostData);
@@ -53,6 +54,30 @@ class HostUseCase {
       console.log(error);
     }
   }
+
+  async authentication(token: string, otp: string) {
+    try {
+      const decodeToken = this.Jwt.verifyToken(token);
+      if (decodeToken) {
+        const fetchOtp = await this.OtpRepo.getOtp(decodeToken.email);
+
+        if (fetchOtp?.otp === otp) {
+          await this.repository.verifyHostEmail(decodeToken.email);
+          return {
+            status: true,
+            message: `Your account is created wait for account verification by Admin.`,
+          };
+        } else {
+          return { status: false, message: "Invalid otp" };
+        }
+      } else {
+        return { status: false, message: "OTP has been expired" };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async resendOtp(token: string) {
     try {
       let decodeToken = this.Jwt.verifyToken(token);
@@ -71,43 +96,22 @@ class HostUseCase {
       console.log(error);
     }
   }
-  async authentication(token: string, otp: string) {
-    try {
-      let decodeToken = this.Jwt.verifyToken(token);
-      if (decodeToken) {
-        let fetchOtp = await this.OtpRepo.getOtp(decodeToken.email);
-
-        if (fetchOtp?.otp === otp) {
-          let hostToken = this.Jwt.createToken(decodeToken._id, "host");
-
-          let hostData = await this.repository.fetchHostData(decodeToken.email);
-
-          await this.repository.verifyHost(decodeToken.email);
-
-          return {
-            status: true,
-            token: hostToken,
-            hostData,
-          };
-        } else {
-          return { status: false, message: "Invalid otp" };
-        }
-      } else {
-        return { status: false, message: "OTP has been expired" };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   async Login(email: string, password: string) {
     try {
       let hostFound = await this.repository.findHostByEmail(email);
       if (hostFound) {
         const host = await this.repository.fetchHostData(email);
 
-        if (!hostFound.isVerified) {
-          return { status: false, message: "Account is not verified!!" };
+        if (!hostFound.emailVerified) {
+          return {
+            status: false,
+            message: "Your Business Email is not verified!!",
+          };
+        } else if (!hostFound.isVerified) {
+          return {
+            status: false,
+            message: "Your account isn't verified by Admin. Please wait.",
+          };
         }
         const correct = await this.bcryption.Encryption(
           password,
@@ -143,6 +147,16 @@ class HostUseCase {
             status: false,
             message: "You can't access this account!!",
           };
+        } else if (!exist.emailVerified) {
+          return {
+            status: false,
+            message: "Your Business Email is not verified!!",
+          };
+        } else if (!exist.isVerified) {
+          return {
+            status: false,
+            message: "Your account isn't verified by Admin. Please wait.",
+          };
         } else {
           const hostData = await this.repository.fetchHostData(email);
           const token = this.Jwt.createToken(hostData?._id, "host");
@@ -154,14 +168,12 @@ class HostUseCase {
           };
         }
       } else {
-        const host = await this.repository.saveGoogleUser(credential);
-        const token = this.Jwt.createToken(host?._id, "host");
-        const hostData = await this.repository.fetchHostData(email);
+        await this.repository.saveGoogleUser(credential);
+
         return {
           status: true,
-          hostData,
-          message: "Welcome to Next-Trip MyBIZ Account.",
-          token,
+          message:
+            "Your account is created wait for account verification by Admin.",
         };
       }
     } catch (error) {
@@ -175,8 +187,8 @@ class HostUseCase {
         const otp = this.generateOtp.generateOTP();
         await this.sendMail.sendEmail(email, parseInt(otp));
         await this.OtpRepo.createOtpCollection(email, otp);
-        const token = this.Jwt.createToken(exist._id, "host");
-        return { status: true, message: `Otp re-sent to ${email}`, token };
+        const token = this.Jwt.createToken(exist._id, "hostForget");
+        return { status: true, message: `Otp sent to ${email}`, token };
       } else {
         return { status: false, message: `You don't have account.` };
       }
@@ -188,7 +200,6 @@ class HostUseCase {
     try {
       let decodeToken = this.Jwt.verifyToken(token);
       const data = await this.repository.findHostById(decodeToken?.id);
-      
 
       if (decodeToken) {
         let fetchOtp = await this.OtpRepo.getOtp(data?.email as string);
@@ -196,6 +207,7 @@ class HostUseCase {
         if (fetchOtp?.otp === otp) {
           return {
             status: true,
+            message: `You can update your password now.`,
           };
         } else {
           return { status: false, message: "Invalid otp" };

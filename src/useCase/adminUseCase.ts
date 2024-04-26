@@ -1,11 +1,12 @@
 import AdminRepo from "../infrastructure/repository/adminRepo";
 import PackageRepo from "../infrastructure/repository/packageRepo";
+import IAdminUseCase from "./interface/IAdminUseCase";
 
 import Admin from "../domain/admin";
 import Jwt from "../infrastructure/utils/jwt";
 import Bcrypt from "../infrastructure/utils/bcryption";
 
-class AdminUseCase  {
+class AdminUseCase implements IAdminUseCase{
   constructor(
     private adminRepo: AdminRepo,
     private jwt: Jwt,
@@ -110,7 +111,7 @@ class AdminUseCase  {
   }
   async packagesList () {
     try {
-      const packagesData = await this.adminRepo.findPackagesData();
+      const packagesData = await this.packageRepo.findPackagesDataForAdmin();
       return packagesData;
     } catch (error) {
       console.log(error);

@@ -122,6 +122,14 @@ class PackageRepo implements IPackageRepo {
       console.log(error);
     }
   }
+  async findPackagesDataForAdmin(): Promise<Package[] | undefined> {
+    try {
+      const packages = await packageModel.find();
+      return packages;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default PackageRepo;

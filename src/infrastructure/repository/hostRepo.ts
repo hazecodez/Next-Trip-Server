@@ -29,12 +29,12 @@ class HostRepo implements IHostRepo {
       console.log(error);
     }
   }
-  async verifyHost(email: string): Promise<any> {
+  async verifyHostEmail(email: string): Promise<any> {
     await hostModel.findOneAndUpdate(
       {
         email: email,
       },
-      { isVerified: true }
+      { emailVerified: true }
     );
   }
   async fetchHostData(email: string): Promise<void | host | null> {
@@ -55,7 +55,7 @@ class HostRepo implements IHostRepo {
       const saved = await hostModel.create({
         email: credential.email,
         name: credential.name,
-        isVerified: true,
+        emailVerified: true,
         googleId: credential.sub,
       });
       return saved;

@@ -9,8 +9,7 @@ interface IAdminRepo {
   blockAndUnblockTraveler(id: string): Promise<boolean>;
   findHostsData(): Promise<host[] | undefined>;
   blockAndUnblockHost(id: string): Promise<boolean>;
-  findPackagesData(): Promise<Package[] | undefined>;
-  verifyPackage(id:string):Promise<boolean>;
+  verifyPackage(id: string): Promise<boolean>;
 }
 
 export default IAdminRepo;

@@ -3,8 +3,9 @@ import IPackageRepo from "./interface/IPackageRepo";
 
 import { uploadFiles } from "../infrastructure/utils/cloudinary";
 import Jwt from "../infrastructure/utils/jwt";
+import IPackageUseCase from "./interface/IPackageUseCase";
 
-class PackageUseCase {
+class PackageUseCase implements IPackageUseCase{
   private repository: IPackageRepo;
   private Jwt: Jwt;
   constructor(repository: IPackageRepo, jwt: Jwt) {
@@ -77,6 +78,24 @@ class PackageUseCase {
     try {
       const details = await this.repository.getPackageDetails(id);
       return details;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async fetchAllPackages() {
+    try {
+      const response = await this.repository.getAllPackages();
+      if (response) {
+        return {
+          status: true,
+          packages: response,
+        };
+      } else {
+        return {
+          status: false,
+          message: "No packages is available.",
+        };
+      }
     } catch (error) {
       console.log(error);
     }

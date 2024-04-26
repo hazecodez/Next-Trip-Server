@@ -13,6 +13,7 @@ interface IPackageRepo {
     data: Package,
     images: string[] | undefined
   ): Promise<Boolean | undefined>;
+  findPackagesDataForAdmin(): Promise<Package[] | undefined>;
 }
 
 export default IPackageRepo;
