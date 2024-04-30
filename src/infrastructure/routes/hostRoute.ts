@@ -30,6 +30,7 @@ const hostUseCase = new HostUseCase(
   bcrypt,
   OtpRepo
 );
+
 const packageUseCase = new PackageUseCase(packageRepo, jwt);
 const packageController = new PackageController(packageUseCase);
 

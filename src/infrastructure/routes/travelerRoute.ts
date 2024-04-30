@@ -10,6 +10,10 @@ import NodeMailer from "../utils/email";
 import PackageRepo from "../repository/packageRepo";
 import PackageController from "../../adaptors/packageController";
 import PackageUseCase from "../../useCase/packageUseCase";
+import conversationRepository from "../repository/conversationRepository";
+import messageRepo from "../repository/messageRepo";
+import chatUseCase from "../../useCase/chatUseCase";
+import chatController from "../../adaptors/chatController";
 
 const generateOTP = new GenerateOTP();
 const repository = new TravelerRepo();
@@ -18,6 +22,8 @@ const bcrypt = new Bcrypt();
 const sendMail = new NodeMailer();
 const OtpRepo = new OtpRepository();
 const packageRepo = new PackageRepo();
+const MessageRepo = new messageRepo();
+const CoversationRepo = new conversationRepository();
 
 const travelerUseCase = new TravelerUseCase(
   repository,
@@ -27,6 +33,9 @@ const travelerUseCase = new TravelerUseCase(
   bcrypt,
   OtpRepo
 );
+
+const ChatUseCase = new chatUseCase(CoversationRepo, MessageRepo);
+const ChatController = new chatController(ChatUseCase, jwt);
 
 const packageUseCase = new PackageUseCase(packageRepo, jwt);
 const packageController = new PackageController(packageUseCase);
@@ -62,6 +71,22 @@ router.post("/new_password", (req, res) =>
 
 router.get("/package_list", (req, res) =>
   packageController.fetchAllPackages(req, res)
+);
+router.patch("/package_details", (req, res) =>
+  packageController.fetchPackageDetails(req, res)
+);
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------
+router.post("/new_conversation", (req, res) =>
+  ChatController.newConversation(req, res)
+);
+router.get("/get_conversations", (req, res) =>
+  ChatController.getConversations(req, res)
+);
+router.post("/new_message", (req, res) => ChatController.addMessage(req, res));
+router.patch("/get_messages", (req, res) => ChatController.getMessages(req, res));
+router.patch("/find_user", (req, res) =>
+  ChatController.findUserById(req, res)
 );
 
 export default router;

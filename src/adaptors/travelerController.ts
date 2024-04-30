@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import TravelerUseCase from "../useCase/travelerUseCase";
 import ITravelerController from "../useCase/interface/ITravelerCon";
 
-class TravelerController implements ITravelerController{
+class TravelerController implements ITravelerController {
   private travelerUseCase: TravelerUseCase;
   constructor(travelerUseCase: TravelerUseCase) {
     this.travelerUseCase = travelerUseCase;
@@ -76,7 +76,7 @@ class TravelerController implements ITravelerController{
       );
       if (verifiedTraveler && verifiedTraveler.status) {
         if (verifiedTraveler.status) {
-          return res
+          res
             .cookie("traveler", verifiedTraveler.token, {
               expires: new Date(Date.now() + 25892000000),
               secure: true,

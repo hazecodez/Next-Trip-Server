@@ -4,6 +4,9 @@ import travelerRoute from "../routes/travelerRoute";
 import hostRoute from "../routes/hostRoute";
 import adminRoute from "../routes/adminRoute";
 import cookieParser from "cookie-parser";
+import http from "http";
+import socketConfiguration from "./socket";
+require("dotenv").config();
 
 export const createServer = () => {
   try {
@@ -14,7 +17,7 @@ export const createServer = () => {
 
     app.use(
       cors({
-        origin: "http://localhost:5173",
+        origin: process.env.FRONTEND_URL,
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         credentials: true,
       })
@@ -24,7 +27,10 @@ export const createServer = () => {
     app.use("/host", hostRoute);
     app.use("/admin", adminRoute);
 
-    return app;
+    const server = http.createServer(app);
+    socketConfiguration(server);
+
+    return server;
   } catch (error: any) {
     console.log(error.message);
   }

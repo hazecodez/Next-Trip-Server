@@ -8,7 +8,8 @@ class Jwt {
   constructor() {
     this.secret = process.env.JWT_SECRET || "";
   }
-  createToken(id: string | undefined, role: string): string {
+  createToken(id: string | undefined, role: string): string {  
+    
     try {
       let payload = { id, role };
       const token = sign(payload, this.secret, { expiresIn: "1d" });
