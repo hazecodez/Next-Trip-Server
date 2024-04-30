@@ -17,10 +17,22 @@ class AdminRepo implements IAdminRepo {
       console.log(error);
     }
   }
-  async findTravelersData(): Promise<traveler[] | undefined> {
+  async findTravelersData(search: string, page: number): Promise<any> {
     try {
-      const travelers = await travelerModel.find();
-      return travelers;
+      const limit = 6;
+      const skip = (page - 1) * limit;
+      const TotalTravelers = await travelerModel.find({}).countDocuments();
+      const totalPages = Math.floor(TotalTravelers / limit);
+      const travelers = await travelerModel
+        .find({
+          $or: [
+            { name: { $regex: "^" + search, $options: "i" } },
+            { email: { $regex: "^" + search, $options: "i" } },
+          ],
+        })
+        .skip(skip)
+        .limit(limit);
+      return { travelers, totalPages };
     } catch (error) {
       console.log(error);
     }
@@ -47,10 +59,22 @@ class AdminRepo implements IAdminRepo {
       return false;
     }
   }
-  async findHostsData(): Promise<host[] | undefined> {
+  async findHostsData(search: string, page: number): Promise<any> {
     try {
-      const hosts = await hostModel.find();
-      return hosts;
+      const limit = 6;
+      const skip = (page - 1) * limit;
+      const totalHosts = await hostModel.find({}).countDocuments();
+      const totalPages = Math.floor(totalHosts / limit);
+      const hosts = await hostModel
+        .find({
+          $or: [
+            { name: { $regex: "^" + search, $options: "i" } },
+            { email: { $regex: "^" + search, $options: "i" } },
+          ],
+        })
+        .skip(skip)
+        .limit(limit);
+      return { hosts, totalPages };
     } catch (error) {
       console.log(error);
     }
@@ -93,6 +117,26 @@ class AdminRepo implements IAdminRepo {
       }
     } catch (error) {
       return false;
+    }
+  }
+  async findPackagesData(search: string, page: number): Promise<any> {
+    try {
+      const limit = 6;
+      const skip = (page - 1) * limit;
+      const totalPackages = await packageModel.find({}).countDocuments();
+      const totalPages = Math.floor(totalPackages / limit);
+      const packages = await packageModel
+        .find({
+          $or: [
+            { name: { $regex: "^" + search, $options: "i" } },
+            { destination: { $regex: "^" + search, $options: "i" } },
+          ],
+        })
+        .skip(skip)
+        .limit(limit);
+      return { packages, totalPages };
+    } catch (error) {
+      console.log(error);
     }
   }
 }

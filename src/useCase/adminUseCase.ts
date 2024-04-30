@@ -6,7 +6,7 @@ import Admin from "../domain/admin";
 import Jwt from "../infrastructure/utils/jwt";
 import Bcrypt from "../infrastructure/utils/bcryption";
 
-class AdminUseCase implements IAdminUseCase{
+class AdminUseCase implements IAdminUseCase {
   constructor(
     private adminRepo: AdminRepo,
     private jwt: Jwt,
@@ -77,9 +77,12 @@ class AdminUseCase implements IAdminUseCase{
       console.log(error);
     }
   }
-  async findTravelersList() {
+  async findTravelersList(search: string, page: number) {
     try {
-      const travelersData = await this.adminRepo.findTravelersData();
+      const travelersData = await this.adminRepo.findTravelersData(
+        search,
+        page
+      );
       return travelersData;
     } catch (error) {
       console.log(error);
@@ -93,9 +96,9 @@ class AdminUseCase implements IAdminUseCase{
       console.log(error);
     }
   }
-  async findHostsList() {
+  async findHostsList(search: string, page: number) {
     try {
-      const hostsData = await this.adminRepo.findHostsData();
+      const hostsData = await this.adminRepo.findHostsData(search, page);
       return hostsData;
     } catch (error) {
       console.log(error);
@@ -109,22 +112,20 @@ class AdminUseCase implements IAdminUseCase{
       console.log(error);
     }
   }
-  async packagesList () {
+  async packagesList(search: string, page: number) {
     try {
-      const packagesData = await this.packageRepo.findPackagesDataForAdmin();
+      const packagesData = await this.adminRepo.findPackagesData(search, page);
       return packagesData;
     } catch (error) {
       console.log(error);
-      
     }
   }
-  async packageActions(id:string) {
+  async packageActions(id: string) {
     try {
       const acted = await this.adminRepo.verifyPackage(id);
       return acted;
     } catch (error) {
       console.log(error);
-      
     }
   }
 }

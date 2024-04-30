@@ -45,7 +45,9 @@ class AdminController implements IAdminController {
   }
   async getTravelersList(req: Request, res: Response) {
     try {
-      const travelers = await this.adminUseCase.findTravelersList();
+      const search = (req.query.search as string) || "";
+      const page = parseInt(req.query.page as string);
+      const travelers = await this.adminUseCase.findTravelersList(search,page);
       if (travelers) {
         res.status(200).json({ status: true, travelers });
       } else {
@@ -57,7 +59,9 @@ class AdminController implements IAdminController {
   }
   async getPackagesList(req: Request, res: Response) {
     try {
-      const packages = await this.adminUseCase.packagesList();
+      const search = (req.query.search as string) || "";
+      const page = parseInt(req.query.page as string);
+      const packages = await this.adminUseCase.packagesList(search,page);
       if (packages) {
         res.status(200).json({ status: true, packages });
       } else {
@@ -95,7 +99,9 @@ class AdminController implements IAdminController {
   }
   async getHostsList(req: Request, res: Response) {
     try {
-      const hosts = await this.adminUseCase.findHostsList();
+      const search = (req.query.search as string) || "";
+      const page = parseInt(req.query.page as string);
+      const hosts = await this.adminUseCase.findHostsList(search,page);
       if (hosts) {
         res.status(200).json({ status: true, hosts });
       } else {

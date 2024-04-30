@@ -5,11 +5,12 @@ import traveler from "../../domain/traveler";
 
 interface IAdminRepo {
   findAdminByEmail(email: string): Promise<Admin | null | void>;
-  findTravelersData(): Promise<traveler[] | undefined>;
+  findTravelersData(search: string, page: number): Promise<any>;
   blockAndUnblockTraveler(id: string): Promise<boolean>;
-  findHostsData(): Promise<host[] | undefined>;
+  findHostsData(search: string, page: number): Promise<any>;
   blockAndUnblockHost(id: string): Promise<boolean>;
   verifyPackage(id: string): Promise<boolean>;
+  findPackagesData(search: string, page: number): Promise<any>;
 }
 
 export default IAdminRepo;
