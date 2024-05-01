@@ -14,6 +14,7 @@ import conversationRepository from "../repository/conversationRepository";
 import messageRepo from "../repository/messageRepo";
 import chatUseCase from "../../useCase/chatUseCase";
 import chatController from "../../adaptors/chatController";
+import { travelerAuth } from "../middleware/userAuth";
 
 const generateOTP = new GenerateOTP();
 const repository = new TravelerRepo();
@@ -69,23 +70,27 @@ router.post("/new_password", (req, res) =>
   controller.upadateTravelerPassword(req, res)
 );
 
-router.get("/package_list", (req, res) =>
+router.get("/package_list", travelerAuth, (req, res) =>
   packageController.fetchAllPackages(req, res)
 );
-router.patch("/package_details", (req, res) =>
+router.patch("/package_details", travelerAuth, (req, res) =>
   packageController.fetchPackageDetails(req, res)
 );
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------
-router.post("/new_conversation", (req, res) =>
+router.post("/new_conversation", travelerAuth, (req, res) =>
   ChatController.newConversation(req, res)
 );
-router.get("/get_conversations", (req, res) =>
+router.get("/get_conversations", travelerAuth, (req, res) =>
   ChatController.getConversations(req, res)
 );
-router.post("/new_message", (req, res) => ChatController.addMessage(req, res));
-router.patch("/get_messages", (req, res) => ChatController.getMessages(req, res));
-router.patch("/find_user", (req, res) =>
+router.post("/new_message", travelerAuth, (req, res) =>
+  ChatController.addMessage(req, res)
+);
+router.patch("/get_messages", travelerAuth, (req, res) =>
+  ChatController.getMessages(req, res)
+);
+router.patch("/find_user", travelerAuth, (req, res) =>
   ChatController.findUserById(req, res)
 );
 

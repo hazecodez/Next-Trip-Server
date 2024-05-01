@@ -22,14 +22,16 @@ export const hostAuth = async (
           return { status: false, message: "Can't access." };
         } else {
           const hostData = await host.findHostById(decode.id);
+          console.log(hostData);
 
           if (
             host &&
-            hostData?.isBlocked &&
-            !hostData.isVerified &&
-            !hostData.emailVerified
+            hostData?.isBlocked ||
+            !hostData?.isVerified ||
+            !hostData?.emailVerified
           ) {
-            res.status(401).json({ blocked: true });
+            res.json({ status: false, blocked: true, message: "Can't access" })
+              .status(401);
           } else {
             next();
           }
