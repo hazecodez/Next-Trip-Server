@@ -4,8 +4,9 @@ import IPackageRepo from "./interface/IPackageRepo";
 import { uploadFiles } from "../infrastructure/utils/cloudinary";
 import Jwt from "../infrastructure/utils/jwt";
 import IPackageUseCase from "./interface/IPackageUseCase";
+import { checkout } from "../infrastructure/utils/stripe";
 
-class PackageUseCase implements IPackageUseCase{
+class PackageUseCase implements IPackageUseCase {
   private repository: IPackageRepo;
   private Jwt: Jwt;
   constructor(repository: IPackageRepo, jwt: Jwt) {
@@ -95,6 +96,24 @@ class PackageUseCase implements IPackageUseCase{
           status: false,
           message: "No packages is available.",
         };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async bookPackage(Data: any, token: string): Promise<any> {
+    try {
+      const traveler = this.Jwt.verifyToken(token);
+      const response = await this.repository.saveBookedPackage(
+        traveler?.id,
+        Data
+      );
+      if (response) {
+        const sessionId = await checkout(Data);
+        if (sessionId) {
+          const booked = await this.repository.bookingStatusUpdate(response);
+          if (booked) return { sessionId, status: true };
+        }
       }
     } catch (error) {
       console.log(error);

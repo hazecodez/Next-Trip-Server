@@ -93,5 +93,8 @@ router.patch("/get_messages", travelerAuth, (req, res) =>
 router.patch("/find_user", travelerAuth, (req, res) =>
   ChatController.findUserById(req, res)
 );
+router.post("/package_booking", travelerAuth, (req, res) =>
+  packageController.bookPackage(req, res)
+);
 
 export default router;

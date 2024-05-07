@@ -1,5 +1,6 @@
 import Package from "../../domain/package";
 import IPackageRepo from "../../useCase/interface/IPackageRepo";
+import bookingModel from "../database/bookingModel";
 import packageModel from "../database/packageModel";
 
 class PackageRepo implements IPackageRepo {
@@ -112,12 +113,12 @@ class PackageRepo implements IPackageRepo {
           price: data.price,
           room_type: data.room_type,
           stay: data.stay,
-          is_verified:false,
+          is_verified: false,
           images: images,
         }
       );
-      if(updated) return true
-      return false
+      if (updated) return true;
+      return false;
     } catch (error) {
       console.log(error);
     }
@@ -128,6 +129,32 @@ class PackageRepo implements IPackageRepo {
       return packages;
     } catch (error) {
       console.log(error);
+    }
+  }
+  async saveBookedPackage(id: string, Data: any): Promise<string | undefined> {
+    try {
+      const saved = await bookingModel.create({
+        packageId: Data.packageId,
+        totalPrice: Data.totalPrice,
+        travelerId: id,
+        travelers: Data.travelers,
+        status: "pending",
+      });
+      if (saved) return saved._id;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async bookingStatusUpdate(id: string): Promise<Boolean> {
+    try {
+      const updated = await bookingModel.findOneAndUpdate(
+        { _id: id },
+        { status: "booked" }
+      );
+      if (updated) return true;
+      return false;
+    } catch (error) {
+      return false;
     }
   }
 }

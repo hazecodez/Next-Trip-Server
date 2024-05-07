@@ -6,6 +6,7 @@ interface IPackageUseCase {
   getPackagesByHost(token: string): Promise<any>;
   getPackageDetails(id: string): Promise<any>;
   fetchAllPackages(): Promise<any>;
+  bookPackage(Data: any, token: string): Promise<any>;
 }
 
 export default IPackageUseCase;

@@ -6,6 +6,7 @@ interface IPackageController {
   fetchPackageDetails(req: Request, res: Response): Promise<void>;
   UpdatePackage(req: Request, res: Response): Promise<void>;
   fetchAllPackages(req: Request, res: Response): Promise<void>;
+  bookPackage(req: Request, res: Response): Promise<void>;
 }
 
 export default IPackageController;
