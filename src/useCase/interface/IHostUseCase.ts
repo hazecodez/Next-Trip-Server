@@ -9,6 +9,7 @@ interface IHostUseCase {
   forgetPassSendOTP(email: string): Promise<any>;
   confirmForgetOTP(token: string, otp: string): Promise<any>;
   upadateHostPassword(token: string, password: string): Promise<any>;
+  updateHostWallet(Data:any,token:string):Promise<Boolean>;
 }
 
 export default IHostUseCase;

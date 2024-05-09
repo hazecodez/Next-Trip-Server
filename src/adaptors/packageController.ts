@@ -1,11 +1,14 @@
 import PackageUseCase from "../useCase/packageUseCase";
 import { Request, Response } from "express";
 import IPackageController from "../useCase/interface/IPackageCon";
+import HostUseCase from "../useCase/hostUseCase";
 
 class PackageController implements IPackageController {
   private packageUseCase: PackageUseCase;
-  constructor(packageUseCase: PackageUseCase) {
+  private hostUseCase: HostUseCase;
+  constructor(packageUseCase: PackageUseCase, hostUseCase: HostUseCase) {
     this.packageUseCase = packageUseCase;
+    this.hostUseCase = hostUseCase;
   }
   async createPackage(req: Request, res: Response) {
     try {
@@ -86,7 +89,12 @@ class PackageController implements IPackageController {
       const token = req.cookies.traveler as string;
       const response = await this.packageUseCase.bookPackage(req.body, token);
       if (response?.status) {
-        res.status(200).json(response?.sessionId);
+        const walletUpdated = await this.hostUseCase.updateHostWallet(req.body, token);
+        if (walletUpdated) {
+          res.status(200).json(response?.sessionId);
+        }else {
+          res.json(response);
+        }
       } else {
         res.json(response);
       }

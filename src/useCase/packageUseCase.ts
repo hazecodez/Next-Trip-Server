@@ -108,11 +108,14 @@ class PackageUseCase implements IPackageUseCase {
         traveler?.id,
         Data
       );
+      await this.repository.updatePackageCapacity(
+        Data.packageId,
+        Data.travelers.length
+      );
       if (response) {
         const sessionId = await checkout(Data);
         if (sessionId) {
-          const booked = await this.repository.bookingStatusUpdate(response);
-          if (booked) return { sessionId, status: true };
+          return { sessionId, status: true };
         }
       }
     } catch (error) {

@@ -15,9 +15,14 @@ import messageRepo from "../repository/messageRepo";
 import chatUseCase from "../../useCase/chatUseCase";
 import chatController from "../../adaptors/chatController";
 import { travelerAuth } from "../middleware/userAuth";
+import HostUseCase from "../../useCase/hostUseCase";
+import HostRepo from "../repository/hostRepo";
+import BookingRepo from "../repository/bookingRepo";
+import BookingUseCase from "../../useCase/bookingUseCase";
+import BookingController from "../../adaptors/bookingController";
 
 const generateOTP = new GenerateOTP();
-const repository = new TravelerRepo();
+const TravelerRepository = new TravelerRepo();
 const jwt = new Jwt();
 const bcrypt = new Bcrypt();
 const sendMail = new NodeMailer();
@@ -25,21 +30,34 @@ const OtpRepo = new OtpRepository();
 const packageRepo = new PackageRepo();
 const MessageRepo = new messageRepo();
 const CoversationRepo = new conversationRepository();
+const hostRepository = new HostRepo();
+const bookingRepo = new BookingRepo();
 
 const travelerUseCase = new TravelerUseCase(
-  repository,
+  TravelerRepository,
   generateOTP,
   sendMail,
   jwt,
   bcrypt,
   OtpRepo
 );
+const hostUseCase = new HostUseCase(
+  hostRepository,
+  generateOTP,
+  sendMail,
+  jwt,
+  bcrypt,
+  OtpRepo,
+  TravelerRepository
+);
+const bookingUseCase = new BookingUseCase(bookingRepo, jwt);
+const bookingController = new BookingController(bookingUseCase, hostUseCase);
 
 const ChatUseCase = new chatUseCase(CoversationRepo, MessageRepo);
 const ChatController = new chatController(ChatUseCase, jwt);
 
 const packageUseCase = new PackageUseCase(packageRepo, jwt);
-const packageController = new PackageController(packageUseCase);
+const packageController = new PackageController(packageUseCase, hostUseCase);
 
 const controller = new TravelerController(travelerUseCase);
 const router = express.Router();
@@ -95,6 +113,9 @@ router.patch("/find_user", travelerAuth, (req, res) =>
 );
 router.post("/package_booking", travelerAuth, (req, res) =>
   packageController.bookPackage(req, res)
+);
+router.get("/booked_packages", travelerAuth, (req, res) =>
+  bookingController.getBookingsByUser(req, res)
 );
 
 export default router;

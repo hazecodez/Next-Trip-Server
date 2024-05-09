@@ -78,6 +78,31 @@ class HostRepo implements IHostRepo {
       console.log(error);
     }
   }
+  async updateWallet(Data: any, traveler: any): Promise<Boolean> {
+    try {
+      const updated = await hostModel.findOneAndUpdate(
+        { _id: Data.hostId },
+        {
+          $inc: { wallet: Data.totalPrice },
+          $push: {
+            walletHistory: {
+              packageName: Data.name,
+              travelerName: traveler.name,
+              amount: Data.totalPrice,
+              status: "Credited",
+              date: new Date(),
+            },
+          },
+        },
+        { new: true }
+      );
+      if (updated) return true;
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 }
 
 export default HostRepo;

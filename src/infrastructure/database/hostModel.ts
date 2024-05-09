@@ -40,6 +40,18 @@ const hostSchema: Schema<host> = new Schema({
   googleId: {
     type: String,
   },
+  walletHistory: {
+    type: [
+      {
+        packageName: String,
+        travelerName: String,
+        amount: Number,
+        status: String,
+        date: { type: Date, default: Date.now },
+      },
+    ],
+    default: [],
+  },
 });
 
 const hostModel = model<host>("host", hostSchema);

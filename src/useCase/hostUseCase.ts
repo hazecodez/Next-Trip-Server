@@ -10,6 +10,7 @@ import Jwt from "../infrastructure/utils/jwt";
 import jwt from "jsonwebtoken";
 import OtpRepository from "../infrastructure/repository/otpRepo";
 import IHostUseCase from "./interface/IHostUseCase";
+import ITravelerRepo from "./interface/ITravelerRepo";
 
 class HostUseCase implements IHostUseCase {
   constructor(
@@ -18,7 +19,8 @@ class HostUseCase implements IHostUseCase {
     private sendMail: IMailer,
     private Jwt: Jwt,
     private bcryption: Bcrypt,
-    private OtpRepo: OtpRepository
+    private OtpRepo: OtpRepository,
+    private travelerRepo: ITravelerRepo
   ) {
     this.repository = repository;
     this.generateOtp = generateOtp;
@@ -26,6 +28,7 @@ class HostUseCase implements IHostUseCase {
     this.Jwt = Jwt;
     this.bcryption = bcryption;
     this.OtpRepo = OtpRepo;
+    this.travelerRepo = travelerRepo;
   }
 
   async signUpAndSendOtp(hostData: host) {
@@ -240,6 +243,18 @@ class HostUseCase implements IHostUseCase {
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+  async updateHostWallet(Data: any, token: string): Promise<Boolean> {
+    try {
+      const user = this.Jwt.verifyToken(token);
+      const traveler = await this.travelerRepo.findTravelerById(user?.id);
+      const updated = await this.repository.updateWallet(Data, traveler);
+      if (updated) return true;
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   }
 }

@@ -72,7 +72,10 @@ class PackageRepo implements IPackageRepo {
   }
   async getAllPackages(): Promise<Package[] | null | undefined> {
     try {
-      const packages = await packageModel.find({ is_verified: true });
+      const packages = await packageModel.find({
+        is_verified: true,
+        capacity: { $gt: 0 },
+      });
       if (packages) return packages;
       return null;
     } catch (error) {
@@ -131,29 +134,33 @@ class PackageRepo implements IPackageRepo {
       console.log(error);
     }
   }
-  async saveBookedPackage(id: string, Data: any): Promise<string | undefined> {
+  async saveBookedPackage(id: string, Data: any): Promise<Boolean> {
     try {
       const saved = await bookingModel.create({
         packageId: Data.packageId,
         totalPrice: Data.totalPrice,
         travelerId: id,
         travelers: Data.travelers,
-        status: "pending",
+        status: "booked",
+        packageName: Data.name,
       });
-      if (saved) return saved._id;
+      if (saved) return true;
+      return false;
     } catch (error) {
       console.log(error);
+      return false;
     }
   }
-  async bookingStatusUpdate(id: string): Promise<Boolean> {
+  async updatePackageCapacity(id: string, count: number): Promise<Boolean> {
     try {
-      const updated = await bookingModel.findOneAndUpdate(
+      const updated = await packageModel.findOneAndUpdate(
         { _id: id },
-        { status: "booked" }
+        { $inc: { capacity: -count } }
       );
       if (updated) return true;
       return false;
     } catch (error) {
+      console.log(error);
       return false;
     }
   }

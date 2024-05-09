@@ -22,8 +22,6 @@ export const hostAuth = async (
           return { status: false, message: "Can't access." };
         } else {
           const hostData = await host.findHostById(decode.id);
-          console.log(hostData);
-
           if (
             host &&
             hostData?.isBlocked ||

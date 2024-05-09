@@ -11,6 +11,10 @@ import PackageController from "../../adaptors/packageController";
 import PackageUseCase from "../../useCase/packageUseCase";
 import PackageRepo from "../repository/packageRepo";
 import { hostAuth } from "../middleware/hostAuth";
+import TravelerRepo from "../repository/travelerRepo";
+import BookingRepo from "../repository/bookingRepo";
+import BookingUseCase from "../../useCase/bookingUseCase";
+import BookingController from "../../adaptors/bookingController";
 
 require("dotenv").config();
 
@@ -21,6 +25,8 @@ const bcrypt = new Bcrypt();
 const sendMail = new NodeMailer();
 const OtpRepo = new OtpRepository();
 const packageRepo = new PackageRepo();
+const travelerRepo = new TravelerRepo();
+const bookingRepo = new BookingRepo();
 
 const hostUseCase = new HostUseCase(
   repository,
@@ -28,11 +34,14 @@ const hostUseCase = new HostUseCase(
   sendMail,
   jwt,
   bcrypt,
-  OtpRepo
+  OtpRepo,
+  travelerRepo
 );
+const bookingUseCase = new BookingUseCase(bookingRepo, jwt);
+const bookingController = new BookingController(bookingUseCase, hostUseCase);
 
 const packageUseCase = new PackageUseCase(packageRepo, jwt);
-const packageController = new PackageController(packageUseCase);
+const packageController = new PackageController(packageUseCase, hostUseCase);
 
 const controller = new HostController(hostUseCase);
 
@@ -71,6 +80,9 @@ router.post("/confirm_forget_otp", (req, res) =>
 );
 router.post("/new_password", (req, res) =>
   controller.updateHostPassword(req, res)
+);
+router.get("/bookings", hostAuth, (req, res) =>
+  bookingController.getBookingsByPackage(req, res)
 );
 
 export default router;
