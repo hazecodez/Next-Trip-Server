@@ -50,14 +50,20 @@ const hostUseCase = new HostUseCase(
   OtpRepo,
   TravelerRepository
 );
-const bookingUseCase = new BookingUseCase(bookingRepo, jwt);
-const bookingController = new BookingController(bookingUseCase, hostUseCase);
+const bookingUseCase = new BookingUseCase(bookingRepo, jwt, packageRepo);
 
 const ChatUseCase = new chatUseCase(CoversationRepo, MessageRepo);
 const ChatController = new chatController(ChatUseCase, jwt);
 
 const packageUseCase = new PackageUseCase(packageRepo, jwt);
 const packageController = new PackageController(packageUseCase, hostUseCase);
+
+const bookingController = new BookingController(
+  bookingUseCase,
+  hostUseCase,
+  travelerUseCase,
+  packageUseCase
+);
 
 const controller = new TravelerController(travelerUseCase);
 const router = express.Router();
@@ -119,10 +125,13 @@ router.patch("/find_user", travelerAuth, (req, res) =>
   ChatController.findUserById(req, res)
 );
 router.post("/package_booking", travelerAuth, (req, res) =>
-  packageController.bookPackage(req, res)
+  bookingController.bookPackage(req, res)
 );
 router.get("/booked_packages", travelerAuth, (req, res) =>
   bookingController.getBookingsByUser(req, res)
+);
+router.patch("/cancel_booking", travelerAuth, (req, res) =>
+  bookingController.cancelBooking(req, res)
 );
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -142,5 +151,7 @@ router.post("/create_password", travelerAuth, (req, res) =>
 router.post("/profile_dp", travelerAuth, (req, res) =>
   controller.profilePicUpdate(req, res)
 );
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 export default router;

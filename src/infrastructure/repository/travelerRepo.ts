@@ -115,6 +115,32 @@ class TravelerRepo implements ITravelerRepo {
       return false;
     }
   }
+
+  async cancelAmountToWallet(id: string, Data: any): Promise<Boolean> {
+    try {
+      const updated = await travelerModel.findOneAndUpdate(
+        { _id: id },
+        {
+          $inc: { wallet: Data.totalPrice },
+          $push: {
+            walletHistory: {
+              packageName: Data.packageName,
+              amount: Data.totalPrice,
+              status: "Credited",
+              date: new Date(),
+            },
+          },
+        },
+        { new: true }
+      );
+      if (updated) return true;
+      return false;
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false
+    }
+  }
 }
 
 export default TravelerRepo;

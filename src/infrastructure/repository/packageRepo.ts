@@ -61,7 +61,13 @@ class PackageRepo implements IPackageRepo {
   }
   async getPackagesById(id: string): Promise<Package[] | null | undefined> {
     try {
-      const packages = await packageModel.find({ host: id, is_verified: true });
+      const today = new Date();
+      const formattedToday = today.toISOString().split("T")[0];
+      const packages = await packageModel.find({
+        host: id,
+        is_verified: true,
+        dur_end: { $gte: formattedToday },
+      });
       if (packages) {
         return packages;
       }
@@ -72,9 +78,12 @@ class PackageRepo implements IPackageRepo {
   }
   async getAllPackages(): Promise<Package[] | null | undefined> {
     try {
+      const today = new Date();
+      const formattedToday = today.toISOString().split("T")[0];
       const packages = await packageModel.find({
         is_verified: true,
         capacity: { $gt: 0 },
+        dur_end: { $gte: formattedToday },
       });
       if (packages) return packages;
       return null;
@@ -134,23 +143,23 @@ class PackageRepo implements IPackageRepo {
       console.log(error);
     }
   }
-  async saveBookedPackage(id: string, Data: any): Promise<Boolean> {
-    try {
-      const saved = await bookingModel.create({
-        packageId: Data.packageId,
-        totalPrice: Data.totalPrice,
-        travelerId: id,
-        travelers: Data.travelers,
-        status: "booked",
-        packageName: Data.name,
-      });
-      if (saved) return true;
-      return false;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
-  }
+  // async saveBookedPackage(id: string, Data: any): Promise<Boolean> {
+  //   try {
+  //     const saved = await bookingModel.create({
+  //       packageId: Data.packageId,
+  //       totalPrice: Data.totalPrice,
+  //       travelerId: id,
+  //       travelers: Data.travelers,
+  //       status: "booked",
+  //       packageName: Data.name,
+  //     });
+  //     if (saved) return true;
+  //     return false;
+  //   } catch (error) {
+  //     console.log(error);
+  //     return false;
+  //   }
+  // }
   async updatePackageCapacity(id: string, count: number): Promise<Boolean> {
     try {
       const updated = await packageModel.findOneAndUpdate(

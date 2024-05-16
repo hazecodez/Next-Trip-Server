@@ -84,24 +84,24 @@ class PackageController implements IPackageController {
       console.log(error);
     }
   }
-  async bookPackage(req: Request, res: Response) {
-    try {
-      const token = req.cookies.traveler as string;
-      const response = await this.packageUseCase.bookPackage(req.body, token);
-      if (response?.status) {
-        const walletUpdated = await this.hostUseCase.updateHostWallet(req.body, token);
-        if (walletUpdated) {
-          res.status(200).json(response?.sessionId);
-        }else {
-          res.json(response);
-        }
-      } else {
-        res.json(response);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // async bookPackage(req: Request, res: Response) {
+  //   try {
+  //     const token = req.cookies.traveler as string;
+  //     const response = await this.packageUseCase.bookPackage(req.body, token);
+  //     if (response?.status) {
+  //       const walletUpdated = await this.hostUseCase.updateHostWallet(req.body, token);
+  //       if (walletUpdated) {
+  //         res.status(200).json(response?.sessionId);
+  //       }else {
+  //         res.json(response);
+  //       }
+  //     } else {
+  //       res.json(response);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 }
 
 export default PackageController;

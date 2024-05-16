@@ -14,7 +14,7 @@ interface IPackageRepo {
     images: string[] | undefined
   ): Promise<Boolean | undefined>;
   findPackagesDataForAdmin(): Promise<Package[] | undefined>;
-  saveBookedPackage(id: string, Data: any): Promise<Boolean>;
+  // saveBookedPackage(id: string, Data: any): Promise<Boolean>;
   updatePackageCapacity(id:string,count:number): Promise<Boolean>;
 }
 

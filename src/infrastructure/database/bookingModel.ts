@@ -2,15 +2,19 @@ import { Booking, Status } from "../../domain/booking";
 import { Schema, model } from "mongoose";
 
 const bookingSchema: Schema<Booking> = new Schema({
-  packageName:{
+  packageName: {
     type: String,
-    required:true
+    required: true,
   },
   travelerId: {
     type: String,
     required: true,
   },
   packageId: {
+    type: String,
+    required: true,
+  },
+  cancelDate: {
     type: String,
     required: true,
   },

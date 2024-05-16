@@ -29,6 +29,18 @@ const travelerSchema: Schema<traveler> = new Schema({
     type: Number,
     default: 0,
   },
+  walletHistory: {
+    type: [
+      {
+        packageName: String,
+        travelerName: String,
+        amount: Number,
+        status: String,
+        date: { type: Date, default: Date.now },
+      },
+    ],
+    default: [],
+  },
   googleId: {
     type: String,
   },

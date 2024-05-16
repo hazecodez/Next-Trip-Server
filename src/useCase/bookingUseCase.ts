@@ -1,20 +1,36 @@
 import IBookingRepo from "./interface/IBookingRepo";
 import Jwt from "../infrastructure/utils/jwt";
 import { checkout } from "../infrastructure/utils/stripe";
+import IPackageRepo from "./interface/IPackageRepo";
 
 class BookingUseCase {
   private bookigRepository: IBookingRepo;
   private Jwt: Jwt;
-  constructor(bookigRepository: IBookingRepo, jwt: Jwt) {
+  private packageRepository: IPackageRepo;
+  constructor(
+    bookigRepository: IBookingRepo,
+    jwt: Jwt,
+    packageRepository: IPackageRepo
+  ) {
     this.bookigRepository = bookigRepository;
     this.Jwt = jwt;
+    this.packageRepository = packageRepository;
   }
+
   async bookPackage(Data: any, token: string): Promise<any> {
     try {
       const traveler = this.Jwt.verifyToken(token);
+      const packageDetails = await this.packageRepository.getPackageDetails(
+        Data.packageId
+      );
       const response = await this.bookigRepository.saveBookedPackage(
         traveler?.id,
-        Data
+        Data,
+        packageDetails?.book_end as string
+      );
+      await this.packageRepository.updatePackageCapacity(
+        Data.packageId,
+        Data.travelers.length
       );
       if (response) {
         const sessionId = await checkout(Data);
@@ -38,6 +54,32 @@ class BookingUseCase {
     try {
       const response = await this.bookigRepository.fetchBookingByPackageId(id);
       if (response) return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async fetchBookingById(id: string): Promise<any> {
+    try {
+      const Booking = await this.bookigRepository.fetchBookingById(id);
+      return Booking;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async cancelBooking(id: string) {
+    try {
+      const response = await this.bookigRepository.deleteBooking(id);
+      if (response) {
+        return {
+          status: true,
+          message: "Booking cancelled successfully.",
+        };
+      } else {
+        return {
+          status: false,
+          message: "Oops!! something went wrong.",
+        };
+      }
     } catch (error) {
       console.log(error);
     }

@@ -15,6 +15,7 @@ import TravelerRepo from "../repository/travelerRepo";
 import BookingRepo from "../repository/bookingRepo";
 import BookingUseCase from "../../useCase/bookingUseCase";
 import BookingController from "../../adaptors/bookingController";
+import TravelerUseCase from "../../useCase/travelerUseCase";
 
 require("dotenv").config();
 
@@ -37,11 +38,24 @@ const hostUseCase = new HostUseCase(
   OtpRepo,
   travelerRepo
 );
-const bookingUseCase = new BookingUseCase(bookingRepo, jwt);
-const bookingController = new BookingController(bookingUseCase, hostUseCase);
+const travelerUseCase = new TravelerUseCase(
+  travelerRepo,
+  generateOTP,
+  sendMail,
+  jwt,
+  bcrypt,
+  OtpRepo
+);
+const bookingUseCase = new BookingUseCase(bookingRepo, jwt, packageRepo);
 
 const packageUseCase = new PackageUseCase(packageRepo, jwt);
 const packageController = new PackageController(packageUseCase, hostUseCase);
+const bookingController = new BookingController(
+  bookingUseCase,
+  hostUseCase,
+  travelerUseCase,
+  packageUseCase
+);
 
 const controller = new HostController(hostUseCase);
 

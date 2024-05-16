@@ -351,6 +351,22 @@ class TravelerUseCase implements ITravelerUseCase {
       console.log(error);
     }
   }
+  async findTravelerById(id: string) {
+    try {
+      const traveler = await this.repository.findTravelerById(id);
+      return traveler;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async cancelAmountToWallet(Data: any, id: string) {
+    try {
+      const updated = await this.repository.cancelAmountToWallet(id, Data);
+      if (updated) return true;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default TravelerUseCase;

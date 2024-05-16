@@ -78,7 +78,37 @@ class HostRepo implements IHostRepo {
       console.log(error);
     }
   }
-  async updateWallet(Data: any, traveler: any): Promise<Boolean> {
+
+  async updateProfile(Data: any, id: string): Promise<Boolean> {
+    try {
+      const updated = await hostModel.findOneAndUpdate(
+        { _id: id },
+        {
+          name: Data.name,
+          email: Data.email,
+        }
+      );
+      if (updated) return true;
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+  async profilePicUpdate(id: string, image: string): Promise<Boolean> {
+    try {
+      const updated = await hostModel.findOneAndUpdate(
+        { _id: id },
+        { image: image }
+      );
+      if (updated) return true;
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+  async creditedToWallet(Data: any, traveler: any): Promise<Boolean> {
     try {
       const updated = await hostModel.findOneAndUpdate(
         { _id: Data.hostId },
@@ -103,27 +133,27 @@ class HostRepo implements IHostRepo {
       return false;
     }
   }
-  async updateProfile(Data: any, id: string): Promise<Boolean> {
+  async debitedFromWallet(
+    Data: any,
+    travelerName: string,
+    hostId: string
+  ): Promise<Boolean> {
     try {
       const updated = await hostModel.findOneAndUpdate(
-        { _id: id },
+        { _id: hostId },
         {
-          name: Data.name,
-          email: Data.email,
-        }
-      );
-      if (updated) return true;
-      return false;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
-  }
-  async profilePicUpdate(id: string, image: string): Promise<Boolean> {
-    try {
-      const updated = await hostModel.findOneAndUpdate(
-        { _id: id },
-        { image: image }
+          $inc: { wallet: -Data.totalPrice },
+          $push: {
+            walletHistory: {
+              packageName: Data.packageName,
+              travelerName: travelerName,
+              amount: Data.totalPrice,
+              status: "Debited",
+              date: new Date(),
+            },
+          },
+        },
+        { new: true }
       );
       if (updated) return true;
       return false;

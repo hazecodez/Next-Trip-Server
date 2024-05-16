@@ -11,10 +11,11 @@ export enum Status {
 
 export interface Booking {
   _id: string;
-  packageName:string;
-  travelerId: string;
-  packageId: string;
-  travelers: Travelers[];
-  totalPrice: number;
-  status: Status;
+  packageName?: string;
+  travelerId?: string;
+  packageId?: string;
+  travelers?: Travelers[];
+  totalPrice?: number;
+  status?: Status;
+  cancelDate?: string;
 }

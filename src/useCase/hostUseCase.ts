@@ -257,12 +257,24 @@ class HostUseCase implements IHostUseCase {
     try {
       const user = this.Jwt.verifyToken(token);
       const traveler = await this.travelerRepo.findTravelerById(user?.id);
-      const updated = await this.repository.updateWallet(Data, traveler);
+      const updated = await this.repository.creditedToWallet(Data, traveler);
       if (updated) return true;
       return false;
     } catch (error) {
       console.log(error);
       return false;
+    }
+  }
+  async debitedFromWallet(Data: any, travelerName: string, hostId: string) {
+    try {
+      const updated = await this.repository.debitedFromWallet(
+        Data,
+        travelerName,
+        hostId
+      );
+      if (updated) return true;
+    } catch (error) {
+      console.log(error);
     }
   }
   async getHostProfile(token: string) {

@@ -7,7 +7,12 @@ interface traveler {
   isBlocked: boolean;
   image: string;
   wallet: number;
-  walletHistory: Object[];
+  walletHistory: {
+    packageName: string;
+    amount: number;
+    status: string;
+    date: Date;
+  }[];
   googleId: string;
 }
 

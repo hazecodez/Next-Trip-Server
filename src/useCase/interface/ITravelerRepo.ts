@@ -10,6 +10,7 @@ interface ITravelerRepo {
   updateTravelerPassword(id:string,password:string):Promise<Boolean | undefined>;
   updateProfile(Data:any,id:string):Promise<Boolean>;
   profilePicUpdate(id:string,image:string):Promise<Boolean>;
+  cancelAmountToWallet(id:string,Data:any):Promise<Boolean>;
 }
 
 export default ITravelerRepo;

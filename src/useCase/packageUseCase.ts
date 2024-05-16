@@ -101,27 +101,27 @@ class PackageUseCase implements IPackageUseCase {
       console.log(error);
     }
   }
-  async bookPackage(Data: any, token: string): Promise<any> {
-    try {
-      const traveler = this.Jwt.verifyToken(token);
-      const response = await this.repository.saveBookedPackage(
-        traveler?.id,
-        Data
-      );
-      await this.repository.updatePackageCapacity(
-        Data.packageId,
-        Data.travelers.length
-      );
-      if (response) {
-        const sessionId = await checkout(Data);
-        if (sessionId) {
-          return { sessionId, status: true };
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // async bookPackage(Data: any, token: string): Promise<any> {
+  //   try {
+  //     const traveler = this.Jwt.verifyToken(token);
+  //     const response = await this.repository.saveBookedPackage(
+  //       traveler?.id,
+  //       Data
+  //     );
+  //     await this.repository.updatePackageCapacity(
+  //       Data.packageId,
+  //       Data.travelers.length
+  //     );
+  //     if (response) {
+  //       const sessionId = await checkout(Data);
+  //       if (sessionId) {
+  //         return { sessionId, status: true };
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 }
 
 export default PackageUseCase;
