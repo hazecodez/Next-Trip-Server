@@ -11,6 +11,13 @@ import Jwt from "../infrastructure/utils/jwt";
 import jwt from "jsonwebtoken";
 import OtpRepository from "../infrastructure/repository/otpRepo";
 
+interface profileData {
+  name?: string;
+  email?: string;
+  currPass?: string;
+  newPass?: string;
+}
+
 class TravelerUseCase implements ITravelerUseCase {
   constructor(
     private repository: ITravelerRepo,
@@ -230,6 +237,90 @@ class TravelerUseCase implements ITravelerUseCase {
         return {
           status: false,
           message: `Oops! something went wrong.`,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async travelerProfile(token: string) {
+    try {
+      const user = this.Jwt.verifyToken(token);
+      const Traveler = await this.repository.findTravelerById(user?.id);
+      if (Traveler) {
+        return {
+          status: true,
+          Traveler,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async profileUpdate(token: string, data: profileData) {
+    try {
+      const user = this.Jwt.verifyToken(token);
+      const update = await this.repository.updateProfile(data, user?.id);
+      if (update) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async changePassword(token: string, data: profileData) {
+    try {
+      const user = this.Jwt.verifyToken(token);
+      const traveler = await this.repository.findTravelerById(user?.id);
+      const correct = await this.bcryption.Encryption(
+        data.currPass as string,
+        traveler?.password as string
+      );
+      if (!correct) {
+        return { status: false, message: "Enter valid current password" };
+      } else {
+        const hashed = await this.bcryption.Bcryption(data.newPass as string);
+        const changed = await this.repository.updateTravelerPassword(
+          user?.id,
+          hashed ? hashed : ""
+        );
+        if (changed) {
+          return {
+            status: true,
+            message: `Successfully updated your password`,
+          };
+        } else {
+          return {
+            status: false,
+            message: `Oops! something went wrong.`,
+          };
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async createPassword(token: string, password: string) {
+    try {
+      const user = this.Jwt.verifyToken(token);
+      const hashed = await this.bcryption.Bcryption(password as string);
+      const created = await this.repository.updateTravelerPassword(
+        user?.id,
+        hashed ? hashed : ""
+      );
+      if (created) {
+        return {
+          status: true,
+          message: "Password created successfully.",
+        };
+      } else {
+        return {
+          status: false,
+          message: "Oops!! something went wrong.",
         };
       }
     } catch (error) {

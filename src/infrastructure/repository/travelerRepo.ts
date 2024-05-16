@@ -86,6 +86,22 @@ class TravelerRepo implements ITravelerRepo {
       console.log(error);
     }
   }
+  async updateProfile(Data: any, id: string): Promise<Boolean> {
+    try {
+      const updated = await travelerModel.findOneAndUpdate(
+        { _id: id },
+        {
+          name: Data.name,
+          email: Data.email,
+        }
+      );
+      if (updated) return true;
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 }
 
 export default TravelerRepo;

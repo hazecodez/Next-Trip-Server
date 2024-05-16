@@ -8,6 +8,7 @@ interface ITravelerRepo {
   fetchTravelerData(email: string): Promise<void | traveler | null>;
   saveGoogleUser(credential: any): Promise<traveler | undefined>;
   updateTravelerPassword(id:string,password:string):Promise<Boolean | undefined>;
+  updateProfile(Data:any,id:string):Promise<Boolean>;
 }
 
 export default ITravelerRepo;

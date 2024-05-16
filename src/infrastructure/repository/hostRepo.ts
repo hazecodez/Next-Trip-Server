@@ -103,6 +103,22 @@ class HostRepo implements IHostRepo {
       return false;
     }
   }
+  async updateProfile(Data: any, id: string): Promise<Boolean> {
+    try {
+      const updated = await hostModel.findOneAndUpdate(
+        { _id: id },
+        {
+          name: Data.name,
+          email: Data.email,
+        }
+      );
+      if (updated) return true;
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 }
 
 export default HostRepo;

@@ -133,6 +133,7 @@ class TravelerController implements ITravelerController {
       console.log(error);
     }
   }
+
   async confirmForgetOTP(req: Request, res: Response) {
     try {
       const token = req.cookies.forget;
@@ -149,6 +150,7 @@ class TravelerController implements ITravelerController {
       console.log(error);
     }
   }
+
   async upadateTravelerPassword(req: Request, res: Response) {
     try {
       const token = req.cookies.forget;
@@ -161,6 +163,77 @@ class TravelerController implements ITravelerController {
         res.status(200).json(response);
       } else {
         res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async travelerProfile(req: Request, res: Response) {
+    try {
+      const token = req.cookies.traveler;
+      const response = await this.travelerUseCase.travelerProfile(token);
+      if (response?.status) {
+        res.status(200).json(response.Traveler);
+      } else {
+        res.status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async profileUpdate(req: Request, res: Response) {
+    try {
+      const token = req.cookies.traveler;
+      const response = await this.travelerUseCase.profileUpdate(
+        token,
+        req.body
+      );
+      if (response) {
+        res.status(200).json({ status: true, message: "Successfully updated" });
+      } else {
+        res
+          .json({ status: false, message: "Oops!! something went wrong" })
+          .status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async changePassword(req: Request, res: Response) {
+    try {
+      const token = req.cookies.traveler;
+      const response = await this.travelerUseCase.changePassword(
+        token,
+        req.body
+      );
+      if (response?.status) {
+        res.status(200).json({ status: true, message: response.message });
+      } else {
+        res
+          .json({ status: response?.status, message: response?.message })
+          .status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async createPassword(req: Request, res: Response) {
+    try {
+      const token = req.cookies.traveler;
+      const response = await this.travelerUseCase.createPassword(
+        token,
+        req.body.password
+      );
+      if (response?.status) {
+        res
+          .status(200)
+          .json({ status: response.status, message: response.message });
+      } else {
+        res
+          .json({ status: response?.status, message: response?.message })
+          .status(500);
       }
     } catch (error) {
       console.log(error);

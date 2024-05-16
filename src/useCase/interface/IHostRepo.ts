@@ -9,6 +9,7 @@ interface IHostRepo {
   saveGoogleUser(credential: any): Promise<host | undefined>;
   updateHostPassword(id:string,password:string):Promise<Boolean | undefined>;
   updateWallet(Data:any,traveler:any):Promise<Boolean>;
+  updateProfile(Data:any,id:string):Promise<Boolean>;
 }
 
 export default IHostRepo;

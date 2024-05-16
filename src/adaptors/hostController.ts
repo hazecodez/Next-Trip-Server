@@ -154,6 +154,76 @@ class HostController implements IHostController {
       console.log(error);
     }
   }
+
+  async getHostProfile(req: Request, res: Response) {
+    try {
+      const token = req.cookies.host;
+      const response = await this.hostUseCase.getHostProfile(token);
+      if (response?.status) {
+        res.status(200).json(response.Host);
+      } else {
+        res.status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async hostProfileUpdate(req: Request, res: Response) {
+    try {
+      const token = req.cookies.host;
+      const response = await this.hostUseCase.hostProfileUpdate(
+        token,
+        req.body
+      );
+      if (response) {
+        res
+          .status(200)
+          .json({ status: true, message: "Successfully updated." });
+      } else {
+        res
+          .json({ status: false, message: "Oops!! something went wrong." })
+          .status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async hostChangePassword(req: Request, res: Response) {
+    try {
+      const token = req.cookies.host;
+      const response = await this.hostUseCase.changePassword(token, req.body);
+      if (response?.status) {
+        res
+          .status(200)
+          .json({ status: response.status, message: response.message });
+      } else {
+        res.json({ status: response?.status, message: response?.message });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async createPassword(req: Request, res: Response) {
+    try {
+      const token = req.cookies.host;
+      const response = await this.hostUseCase.createPassword(
+        token,
+        req.body.password
+      );
+      if (response?.status) {
+        res
+          .status(200)
+          .json({ status: response.status, message: response.message });
+      } else {
+        res
+          .json({ status: response?.status, message: response?.message })
+          .status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default HostController;

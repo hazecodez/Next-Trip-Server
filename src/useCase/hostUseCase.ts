@@ -12,6 +12,13 @@ import OtpRepository from "../infrastructure/repository/otpRepo";
 import IHostUseCase from "./interface/IHostUseCase";
 import ITravelerRepo from "./interface/ITravelerRepo";
 
+interface profileData {
+  name?: string;
+  email?: string;
+  currPass?: string;
+  newPass?: string;
+}
+
 class HostUseCase implements IHostUseCase {
   constructor(
     private repository: IHostRepo,
@@ -255,6 +262,86 @@ class HostUseCase implements IHostUseCase {
     } catch (error) {
       console.log(error);
       return false;
+    }
+  }
+  async getHostProfile(token: string) {
+    try {
+      const host = this.Jwt.verifyToken(token);
+      const Host = await this.repository.findHostById(host?.id);
+      if (Host) {
+        return { status: true, Host };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async hostProfileUpdate(token: string, data: profileData) {
+    try {
+      const user = this.Jwt.verifyToken(token);
+      const update = await this.repository.updateProfile(data, user?.id);
+      if (update) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async changePassword(token: string, data: profileData) {
+    try {
+      const user = this.Jwt.verifyToken(token);
+      const host = await this.repository.findHostById(user?.id);
+      const correct = await this.bcryption.Encryption(
+        data.currPass as string,
+        host?.password as string
+      );
+      if (!correct) {
+        return { status: false, message: "Enter valid current password" };
+      } else {
+        const hashed = await this.bcryption.Bcryption(data.newPass as string);
+        const changed = await this.repository.updateHostPassword(
+          user?.id,
+          hashed ? hashed : ""
+        );
+        if (changed) {
+          return {
+            status: true,
+            message: `Successfully updated your password`,
+          };
+        } else {
+          return {
+            status: false,
+            message: `Oops! something went wrong.`,
+          };
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async createPassword(token: string, password: string) {
+    try {
+      const user = this.Jwt.verifyToken(token);
+      const hashed = await this.bcryption.Bcryption(password as string);
+      const created = await this.repository.updateHostPassword(
+        user?.id,
+        hashed ? hashed : ""
+      );
+      if (created) {
+        return {
+          status: true,
+          message: "Password created successfully.",
+        };
+      } else {
+        return {
+          status: false,
+          message: "Oops!! something went wrong.",
+        };
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 }

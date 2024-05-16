@@ -47,6 +47,8 @@ const controller = new HostController(hostUseCase);
 
 const router = express.Router();
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 router.post("/verify_otp", (req, res) => {
   controller.AuthenticateHost(req, res);
 });
@@ -60,6 +62,9 @@ router.post("/login", (req, res) => {
 router.post("/google_login", (req, res) => {
   controller.googleAuthLogin(req, res);
 });
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 router.post("/create_package", hostAuth, (req, res) => {
   packageController.createPackage(req, res);
 });
@@ -72,6 +77,12 @@ router.patch("/package_details", hostAuth, (req, res) =>
 router.patch("/update_package", hostAuth, (req, res) =>
   packageController.UpdatePackage(req, res)
 );
+router.get("/bookings", hostAuth, (req, res) =>
+  bookingController.getBookingsByPackage(req, res)
+);
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 router.patch("/forget_pass", (req, res) =>
   controller.forgetPassSendOTP(req, res)
 );
@@ -81,8 +92,19 @@ router.post("/confirm_forget_otp", (req, res) =>
 router.post("/new_password", (req, res) =>
   controller.updateHostPassword(req, res)
 );
-router.get("/bookings", hostAuth, (req, res) =>
-  bookingController.getBookingsByPackage(req, res)
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+router.get("/profile", hostAuth, (req, res) =>
+  controller.getHostProfile(req, res)
+);
+router.post("/profile_update", hostAuth, (req, res) =>
+  controller.hostProfileUpdate(req, res)
+);
+router.post("/change_password", hostAuth, (req, res) =>
+  controller.hostChangePassword(req, res)
+);
+router.post("/create_password", hostAuth, (req, res) =>
+  controller.createPassword(req, res)
 );
 
 export default router;
