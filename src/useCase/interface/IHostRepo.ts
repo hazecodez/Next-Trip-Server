@@ -10,6 +10,7 @@ interface IHostRepo {
   updateHostPassword(id:string,password:string):Promise<Boolean | undefined>;
   updateWallet(Data:any,traveler:any):Promise<Boolean>;
   updateProfile(Data:any,id:string):Promise<Boolean>;
+  profilePicUpdate(id:string,image:string):Promise<Boolean>;
 }
 
 export default IHostRepo;

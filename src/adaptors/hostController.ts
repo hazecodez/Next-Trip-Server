@@ -224,6 +224,26 @@ class HostController implements IHostController {
       console.log(error);
     }
   }
+  async profilePicUpdate(req: Request, res: Response) {
+    try {
+      const token = req.cookies.host;
+      const response = await this.hostUseCase.profilePicUpdate(
+        token,
+        req.body.image
+      );
+      if (response?.status) {
+        res
+          .status(200)
+          .json({ status: response.status, message: response.message });
+      } else {
+        res
+          .json({ status: response?.status, message: response?.message })
+          .status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default HostController;

@@ -24,3 +24,26 @@ export const uploadFiles = async (
     return undefined;
   }
 };
+
+export const profilePicUpload = async (
+  file: string,
+  folder: string
+): Promise<string | undefined> => {
+  try {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+    const response = await cloudinary.uploader.upload(file, {
+      folder: `Next-Trip/${folder}`,
+    });
+    return response.public_id;
+  } catch (error) {
+    console.log(
+      "Error occurred when uploading profile image to Cloudinary.",
+      error
+    );
+    return undefined;
+  }
+};

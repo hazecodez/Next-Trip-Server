@@ -239,6 +239,26 @@ class TravelerController implements ITravelerController {
       console.log(error);
     }
   }
+  async profilePicUpdate(req: Request, res: Response) {
+    try {
+      const token = req.cookies.traveler;
+      const response = await this.travelerUseCase.profilePicUpdate(
+        token,
+        req.body.image
+      );
+      if (response?.status) {
+        res
+          .status(200)
+          .json({ status: response.status, message: response.message });
+      } else {
+        res
+          .json({ status: response?.status, message: response?.message })
+          .status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default TravelerController;

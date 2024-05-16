@@ -9,6 +9,7 @@ interface ITravelerRepo {
   saveGoogleUser(credential: any): Promise<traveler | undefined>;
   updateTravelerPassword(id:string,password:string):Promise<Boolean | undefined>;
   updateProfile(Data:any,id:string):Promise<Boolean>;
+  profilePicUpdate(id:string,image:string):Promise<Boolean>;
 }
 
 export default ITravelerRepo;

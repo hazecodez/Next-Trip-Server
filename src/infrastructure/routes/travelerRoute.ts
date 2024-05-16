@@ -139,5 +139,8 @@ router.post("/change_password", travelerAuth, (req, res) =>
 router.post("/create_password", travelerAuth, (req, res) =>
   controller.createPassword(req, res)
 );
+router.post("/profile_dp", travelerAuth, (req, res) =>
+  controller.profilePicUpdate(req, res)
+);
 
 export default router;

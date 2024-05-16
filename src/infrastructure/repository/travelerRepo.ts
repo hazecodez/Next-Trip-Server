@@ -102,6 +102,19 @@ class TravelerRepo implements ITravelerRepo {
       return false;
     }
   }
+  async profilePicUpdate(id: string, image: string): Promise<Boolean> {
+    try {
+      const updated = await travelerModel.findOneAndUpdate(
+        { _id: id },
+        { image: image }
+      );
+      if (updated) return true;
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 }
 
 export default TravelerRepo;

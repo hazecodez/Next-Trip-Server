@@ -106,5 +106,8 @@ router.post("/change_password", hostAuth, (req, res) =>
 router.post("/create_password", hostAuth, (req, res) =>
   controller.createPassword(req, res)
 );
+router.post("/profile_dp", hostAuth, (req, res) =>
+  controller.profilePicUpdate(req, res)
+);
 
 export default router;

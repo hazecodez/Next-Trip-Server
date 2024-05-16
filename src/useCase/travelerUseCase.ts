@@ -10,6 +10,7 @@ import Bcrypt from "../infrastructure/utils/bcryption";
 import Jwt from "../infrastructure/utils/jwt";
 import jwt from "jsonwebtoken";
 import OtpRepository from "../infrastructure/repository/otpRepo";
+import { profilePicUpload } from "../infrastructure/utils/cloudinary";
 
 interface profileData {
   name?: string;
@@ -316,6 +317,29 @@ class TravelerUseCase implements ITravelerUseCase {
         return {
           status: true,
           message: "Password created successfully.",
+        };
+      } else {
+        return {
+          status: false,
+          message: "Oops!! something went wrong.",
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async profilePicUpdate(token: string, image: string) {
+    try {
+      const publicId = await profilePicUpload(image, "Travelers_Pics");
+      const user = this.Jwt.verifyToken(token);
+      const updated = await this.repository.profilePicUpdate(
+        user?.id,
+        publicId as string
+      );
+      if (updated) {
+        return {
+          status: true,
+          message: "Profile Picture Updated Successfully",
         };
       } else {
         return {
