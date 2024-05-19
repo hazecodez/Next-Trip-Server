@@ -23,7 +23,7 @@ export const checkout = async (Data: any) => {
       mode: "payment",
       payment_method_types: ["card"],
 
-      success_url: `${process.env.FRONTEND_URL}/success_page`,
+      success_url: `${process.env.FRONTEND_URL}/success_page/${Data.packageId}`,
       cancel_url: `${process.env.FRONTEND_URL}/package_details/${Data.packageId}`,
     });
     return { sessionId: session.id };

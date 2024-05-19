@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 require("dotenv").config();
 
+// for upload package images to cloudinary
+
 export const uploadFiles = async (
   files: string[],
   folder: string
@@ -25,7 +27,8 @@ export const uploadFiles = async (
   }
 };
 
-export const profilePicUpload = async (
+
+export const uploadSingleFile = async (
   file: string,
   folder: string
 ): Promise<string | undefined> => {
@@ -47,3 +50,5 @@ export const profilePicUpload = async (
     return undefined;
   }
 };
+
+

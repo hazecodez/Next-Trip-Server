@@ -11,7 +11,7 @@ import jwt from "jsonwebtoken";
 import OtpRepository from "../infrastructure/repository/otpRepo";
 import IHostUseCase from "./interface/IHostUseCase";
 import ITravelerRepo from "./interface/ITravelerRepo";
-import { profilePicUpload } from "../infrastructure/utils/cloudinary";
+import { uploadSingleFile } from "../infrastructure/utils/cloudinary";
 
 interface profileData {
   name?: string;
@@ -359,7 +359,7 @@ class HostUseCase implements IHostUseCase {
   }
   async profilePicUpdate(token: string, image: string) {
     try {
-      const publicId = await profilePicUpload(image, "Hosts_Pics");
+      const publicId = await uploadSingleFile(image, "Hosts_Pics");
       const user = this.Jwt.verifyToken(token);
       const updated = await this.repository.profilePicUpdate(
         user?.id,

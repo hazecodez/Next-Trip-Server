@@ -49,7 +49,7 @@ const travelerUseCase = new TravelerUseCase(
 const bookingUseCase = new BookingUseCase(bookingRepo, jwt, packageRepo);
 
 const packageUseCase = new PackageUseCase(packageRepo, jwt);
-const packageController = new PackageController(packageUseCase, hostUseCase);
+const packageController = new PackageController(packageUseCase);
 const bookingController = new BookingController(
   bookingUseCase,
   hostUseCase,

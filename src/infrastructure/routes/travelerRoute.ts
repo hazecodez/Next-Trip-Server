@@ -20,6 +20,9 @@ import HostRepo from "../repository/hostRepo";
 import BookingRepo from "../repository/bookingRepo";
 import BookingUseCase from "../../useCase/bookingUseCase";
 import BookingController from "../../adaptors/bookingController";
+import BlogUseCase from "../../useCase/blogUseCase";
+import BlogController from "../../adaptors/blogController";
+import BlogRepo from "../repository/blogRepository";
 
 const generateOTP = new GenerateOTP();
 const TravelerRepository = new TravelerRepo();
@@ -32,6 +35,7 @@ const MessageRepo = new messageRepo();
 const CoversationRepo = new conversationRepository();
 const hostRepository = new HostRepo();
 const bookingRepo = new BookingRepo();
+const blogRepo = new BlogRepo();
 
 const travelerUseCase = new TravelerUseCase(
   TravelerRepository,
@@ -51,12 +55,14 @@ const hostUseCase = new HostUseCase(
   TravelerRepository
 );
 const bookingUseCase = new BookingUseCase(bookingRepo, jwt, packageRepo);
+const blogUseCase = new BlogUseCase(blogRepo, jwt);
+const blogController = new BlogController(blogUseCase);
 
 const ChatUseCase = new chatUseCase(CoversationRepo, MessageRepo);
 const ChatController = new chatController(ChatUseCase, jwt);
 
 const packageUseCase = new PackageUseCase(packageRepo, jwt);
-const packageController = new PackageController(packageUseCase, hostUseCase);
+const packageController = new PackageController(packageUseCase);
 
 const bookingController = new BookingController(
   bookingUseCase,
@@ -150,6 +156,30 @@ router.post("/create_password", travelerAuth, (req, res) =>
 );
 router.post("/profile_dp", travelerAuth, (req, res) =>
   controller.profilePicUpdate(req, res)
+);
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+router.post("/create_blog", travelerAuth, (req, res) =>
+  blogController.createBlog(req, res)
+);
+router.get("/blogs", travelerAuth, (req, res) =>
+  blogController.fetchAllBlogs(req, res)
+);
+router.patch("/blog_details", travelerAuth, (req, res) =>
+  blogController.fetchBlogDetails(req, res)
+);
+router.patch("/like_unlike_blog", travelerAuth, (req, res) =>
+  blogController.likeAndUnlikeBlogByUser(req, res)
+);
+router.patch("/comment_blog", travelerAuth, (req, res) =>
+  blogController.commentBlogByUser(req, res)
+);
+router.get("/blogs_by_user", travelerAuth, (req, res) =>
+  blogController.fetchBlogsByUser(req, res)
+);
+router.patch("remove_blog", travelerAuth, (req, res) =>
+  blogController.removeBlogByUser(req, res)
 );
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------

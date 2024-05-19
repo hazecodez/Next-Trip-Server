@@ -1,14 +1,11 @@
 import PackageUseCase from "../useCase/packageUseCase";
 import { Request, Response } from "express";
 import IPackageController from "../useCase/interface/IPackageCon";
-import HostUseCase from "../useCase/hostUseCase";
 
 class PackageController implements IPackageController {
   private packageUseCase: PackageUseCase;
-  private hostUseCase: HostUseCase;
-  constructor(packageUseCase: PackageUseCase, hostUseCase: HostUseCase) {
+  constructor(packageUseCase: PackageUseCase) {
     this.packageUseCase = packageUseCase;
-    this.hostUseCase = hostUseCase;
   }
   async createPackage(req: Request, res: Response) {
     try {

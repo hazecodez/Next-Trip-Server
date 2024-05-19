@@ -10,7 +10,7 @@ import Bcrypt from "../infrastructure/utils/bcryption";
 import Jwt from "../infrastructure/utils/jwt";
 import jwt from "jsonwebtoken";
 import OtpRepository from "../infrastructure/repository/otpRepo";
-import { profilePicUpload } from "../infrastructure/utils/cloudinary";
+import { uploadSingleFile } from "../infrastructure/utils/cloudinary";
 
 interface profileData {
   name?: string;
@@ -330,7 +330,7 @@ class TravelerUseCase implements ITravelerUseCase {
   }
   async profilePicUpdate(token: string, image: string) {
     try {
-      const publicId = await profilePicUpload(image, "Travelers_Pics");
+      const publicId = await uploadSingleFile(image, "Travelers_Pics");
       const user = this.Jwt.verifyToken(token);
       const updated = await this.repository.profilePicUpdate(
         user?.id,

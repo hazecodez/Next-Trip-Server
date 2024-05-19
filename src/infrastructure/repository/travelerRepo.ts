@@ -126,7 +126,7 @@ class TravelerRepo implements ITravelerRepo {
             walletHistory: {
               packageName: Data.packageName,
               amount: Data.totalPrice,
-              status: "Credited",
+              status: "Cancelled",
               date: new Date(),
             },
           },

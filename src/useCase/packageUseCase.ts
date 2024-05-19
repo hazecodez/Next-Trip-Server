@@ -4,7 +4,7 @@ import IPackageRepo from "./interface/IPackageRepo";
 import { uploadFiles } from "../infrastructure/utils/cloudinary";
 import Jwt from "../infrastructure/utils/jwt";
 import IPackageUseCase from "./interface/IPackageUseCase";
-import { checkout } from "../infrastructure/utils/stripe";
+
 
 class PackageUseCase implements IPackageUseCase {
   private repository: IPackageRepo;
