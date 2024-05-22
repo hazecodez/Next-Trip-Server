@@ -23,6 +23,7 @@ import BookingController from "../../adaptors/bookingController";
 import BlogUseCase from "../../useCase/blogUseCase";
 import BlogController from "../../adaptors/blogController";
 import BlogRepo from "../repository/blogRepository";
+import CronJob from "../utils/cronJob";
 
 const generateOTP = new GenerateOTP();
 const TravelerRepository = new TravelerRepo();
@@ -36,6 +37,7 @@ const CoversationRepo = new conversationRepository();
 const hostRepository = new HostRepo();
 const bookingRepo = new BookingRepo();
 const blogRepo = new BlogRepo();
+const cronJob = new CronJob();
 
 const travelerUseCase = new TravelerUseCase(
   TravelerRepository,
@@ -54,7 +56,12 @@ const hostUseCase = new HostUseCase(
   OtpRepo,
   TravelerRepository
 );
-const bookingUseCase = new BookingUseCase(bookingRepo, jwt, packageRepo);
+const bookingUseCase = new BookingUseCase(
+  bookingRepo,
+  jwt,
+  packageRepo,
+  cronJob
+);
 const blogUseCase = new BlogUseCase(blogRepo, jwt);
 const blogController = new BlogController(blogUseCase);
 

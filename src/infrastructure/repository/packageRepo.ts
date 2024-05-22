@@ -83,7 +83,7 @@ class PackageRepo implements IPackageRepo {
       const packages = await packageModel.find({
         is_verified: true,
         capacity: { $gt: 0 },
-        dur_end: { $gte: formattedToday },
+        book_end: { $gte: formattedToday },
       });
       if (packages) return packages;
       return null;

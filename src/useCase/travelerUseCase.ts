@@ -351,6 +351,15 @@ class TravelerUseCase implements ITravelerUseCase {
       console.log(error);
     }
   }
+  async verifyTokenAndFindTraveler(token: string) {
+    try {
+      const user = this.Jwt.verifyToken(token);
+      const traveler = await this.repository.findTravelerById(user?.id);
+      return traveler;
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async findTravelerById(id: string) {
     try {
       const traveler = await this.repository.findTravelerById(id);

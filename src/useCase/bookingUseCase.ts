@@ -2,22 +2,26 @@ import IBookingRepo from "./interface/IBookingRepo";
 import Jwt from "../infrastructure/utils/jwt";
 import { checkout } from "../infrastructure/utils/stripe";
 import IPackageRepo from "./interface/IPackageRepo";
+import CronJob from "../infrastructure/utils/cronJob";
 
 class BookingUseCase {
   private bookigRepository: IBookingRepo;
   private Jwt: Jwt;
   private packageRepository: IPackageRepo;
+  private cronJob: CronJob;
   constructor(
     bookigRepository: IBookingRepo,
     jwt: Jwt,
-    packageRepository: IPackageRepo
+    packageRepository: IPackageRepo,
+    cronJob: CronJob
   ) {
     this.bookigRepository = bookigRepository;
     this.Jwt = jwt;
     this.packageRepository = packageRepository;
+    this.cronJob = cronJob;
   }
 
-  async bookPackage(Data: any, token: string): Promise<any> {
+  async bookPackage(Data: any, token: string, email: string): Promise<any> {
     try {
       const traveler = this.Jwt.verifyToken(token);
       const packageDetails = await this.packageRepository.getPackageDetails(
@@ -33,6 +37,13 @@ class BookingUseCase {
         Data.travelers.length
       );
       if (response) {
+        //---------to schedule email for inform the travelers journey date. day before the start date
+        await this.cronJob.schedule(
+          email,
+          packageDetails?.dur_start as string,
+          packageDetails?.destination as string
+        );
+        //-------for payment
         const sessionId = await checkout(Data);
         if (sessionId) {
           return { sessionId, status: true };

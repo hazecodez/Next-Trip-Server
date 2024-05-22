@@ -24,7 +24,14 @@ class BookingController {
   async bookPackage(req: Request, res: Response) {
     try {
       const token = req.cookies.traveler as string;
-      const response = await this.bookingUseCase.bookPackage(req.body, token);
+      const traveler = await this.travelerUseCase.verifyTokenAndFindTraveler(
+        token
+      );
+      const response = await this.bookingUseCase.bookPackage(
+        req.body,
+        token,
+        traveler?.email as string
+      );
       if (response?.status) {
         const walletUpdated = await this.hostUseCase.updateHostWallet(
           req.body,

@@ -16,6 +16,7 @@ import BookingRepo from "../repository/bookingRepo";
 import BookingUseCase from "../../useCase/bookingUseCase";
 import BookingController from "../../adaptors/bookingController";
 import TravelerUseCase from "../../useCase/travelerUseCase";
+import CronJob from "../utils/cronJob";
 
 require("dotenv").config();
 
@@ -28,6 +29,7 @@ const OtpRepo = new OtpRepository();
 const packageRepo = new PackageRepo();
 const travelerRepo = new TravelerRepo();
 const bookingRepo = new BookingRepo();
+const cronJob = new CronJob();
 
 const hostUseCase = new HostUseCase(
   repository,
@@ -46,7 +48,12 @@ const travelerUseCase = new TravelerUseCase(
   bcrypt,
   OtpRepo
 );
-const bookingUseCase = new BookingUseCase(bookingRepo, jwt, packageRepo);
+const bookingUseCase = new BookingUseCase(
+  bookingRepo,
+  jwt,
+  packageRepo,
+  cronJob
+);
 
 const packageUseCase = new PackageUseCase(packageRepo, jwt);
 const packageController = new PackageController(packageUseCase);
