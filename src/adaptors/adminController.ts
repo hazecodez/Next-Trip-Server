@@ -124,6 +124,33 @@ class AdminController implements IAdminController {
       console.log(error);
     }
   }
+  async getBlogList(req: Request, res: Response) {
+    try {
+      const search = (req.query.search as string) || "";
+      const page = parseInt(req.query.page as string);
+      const blogs = await this.adminUseCase.findBlogsList(search,page);
+      if (blogs) {
+        res.status(200).json({ status: true, blogs });
+      } else {
+        res.json({ status: false, message: "Unable to fetch." });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async block_unblock_Blogs(req: Request, res: Response) {
+    try {
+      const { id } = req.body;
+      const response = await this.adminUseCase.blockOrUnblockBlog(id);
+      if (response) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default AdminController;

@@ -185,7 +185,7 @@ router.patch("/comment_blog", travelerAuth, (req, res) =>
 router.get("/blogs_by_user", travelerAuth, (req, res) =>
   blogController.fetchBlogsByUser(req, res)
 );
-router.patch("remove_blog", travelerAuth, (req, res) =>
+router.patch("/remove_blog", travelerAuth, (req, res) =>
   blogController.removeBlogByUser(req, res)
 );
 

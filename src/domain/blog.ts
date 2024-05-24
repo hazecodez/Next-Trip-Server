@@ -8,6 +8,7 @@ export default interface Blog {
     image:string;
     liked_users:string[];
     time: Date;
+    isBlocked:boolean;
     comments:{
         senderId:string;
         comment: string;

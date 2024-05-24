@@ -53,9 +53,9 @@ class BookingUseCase {
       console.log(error);
     }
   }
-  async fetchBookingsForUser(id: string): Promise<any> {
+  async fetchBookingsForUser(id: string,page:number): Promise<any> {
     try {
-      const response = await this.bookigRepository.fetchBookingByUserId(id);
+      const response = await this.bookigRepository.fetchBookingByUserId(id,page);
       if (response) return response;
     } catch (error) {
       console.log(error);

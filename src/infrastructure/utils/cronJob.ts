@@ -80,7 +80,7 @@ class CronJob {
       if (error) {
         console.log("Error Occured", error);
       } else {
-        console.log("Email sent : ", info.response);
+        console.log("Wishing Email sent : ", info.response);
       }
     });
   }

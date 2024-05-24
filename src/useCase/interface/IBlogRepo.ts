@@ -2,7 +2,7 @@ import Blog from "../../domain/blog";
 
 export default interface IBlogRepo {
   createBlog(data: Blog, image: string, userId: string,name:string): Promise<Boolean>;
-  fetchBlogs(): Promise<Blog[] | null | undefined>;
+  fetchBlogs(page:number): Promise<any>;
   fetchBlogsByUser(userId: string): Promise<Blog[] | null | undefined>;
   fetchBlogDetails(blogId: string): Promise<Blog | null | undefined>;
   like_unlike_blog(

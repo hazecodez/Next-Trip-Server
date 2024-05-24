@@ -52,7 +52,8 @@ class BookingController {
   async getBookingsByUser(req: Request, res: Response) {
     try {
       const userId = req.query.travelerId as string;
-      const response = await this.bookingUseCase.fetchBookingsForUser(userId);
+      const page = parseInt(req.query.page as string);
+      const response = await this.bookingUseCase.fetchBookingsForUser(userId,page);
       if (response) {
         res.status(200).json({ status: true, bookings: response });
       } else {

@@ -50,4 +50,13 @@ router.patch("/package_action", adminAuth, (req, res) =>
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+router.get("/blogs", adminAuth, (req, res) =>
+  controller.getBlogList(req, res)
+);
+router.patch("/blog_action", adminAuth, (req, res) =>
+  controller.block_unblock_Blogs(req, res)
+);
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 export default router;

@@ -7,7 +7,7 @@ export default class BlogRepo implements IBlogRepo {
     data: Blog,
     image: string,
     userId: string,
-    name:string
+    name: string
   ): Promise<Boolean> {
     try {
       const created = await blogModel.create({
@@ -17,7 +17,7 @@ export default class BlogRepo implements IBlogRepo {
         location: data.location,
         time: new Date(),
         userId: userId,
-        userName:name
+        userName: name,
       });
       if (created) return true;
       return false;
@@ -26,10 +26,19 @@ export default class BlogRepo implements IBlogRepo {
       return false;
     }
   }
-  async fetchBlogs(): Promise<Blog[] | null | undefined> {
+  async fetchBlogs(page: number): Promise<any> {
     try {
-      const blogs = await blogModel.find();
-      if (blogs) return blogs;
+      const limit = 3;
+      const skip = (page - 1) * limit;
+      const TotalBlogs = await blogModel
+        .find({ isBlocked: false })
+        .countDocuments();
+      const totalPages = Math.floor(TotalBlogs / limit);
+      const blogs = await blogModel
+        .find({ isBlocked: false })
+        .skip(skip)
+        .limit(limit);
+      if (blogs) return { blogs, totalPages };
       return null;
     } catch (error) {
       console.log(error);
@@ -93,9 +102,8 @@ export default class BlogRepo implements IBlogRepo {
       let action;
 
       const userIndex = blog.liked_users.indexOf(userId);
-      const userLiked = blog.liked_users.includes(userId)
-      
-      
+      const userLiked = blog.liked_users.includes(userId);
+
       if (!userLiked) {
         // User has not liked the blog yet so like the blog
         blog.liked_users.push(userId);

@@ -42,9 +42,9 @@ export default class BlogUseCase {
 
   //-----------------------------------------------------------------------------------------------------------------------------------------------------------
   
-  async fetchBlogs() {
+  async fetchBlogs(page:number) {
     try {
-      const response = await this.blogRepo.fetchBlogs();
+      const response = await this.blogRepo.fetchBlogs(page);
       if (response) {
         return {
           status: true,

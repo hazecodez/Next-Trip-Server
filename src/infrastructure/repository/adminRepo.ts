@@ -7,6 +7,7 @@ import hostModel from "../database/hostModel";
 import host from "../../domain/host";
 import packageModel from "../database/packageModel";
 import Package from "../../domain/package";
+import blogModel from "../database/blogModel";
 
 class AdminRepo implements IAdminRepo {
   async findAdminByEmail(email: string): Promise<Admin | null | void> {
@@ -137,6 +138,48 @@ class AdminRepo implements IAdminRepo {
       return { packages, totalPages };
     } catch (error) {
       console.log(error);
+    }
+  }
+  async findBlogsData(search: string, page: number): Promise<any> {
+    try {
+      const limit = 6;
+      const skip = (page - 1) * limit;
+      const TotalBlogs = await blogModel.find({}).countDocuments();
+      const totalPages = Math.floor(TotalBlogs / limit);
+      const blogs = await blogModel
+        .find({
+          $or: [
+            { caption: { $regex: "^" + search, $options: "i" } },
+            { location: { $regex: "^" + search, $options: "i" } },
+          ],
+        })
+        .skip(skip)
+        .limit(limit);
+      return { blogs, totalPages };
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async blockAndUnblockblog(id: string): Promise<boolean> {
+    try {
+      const blog = await blogModel.findById(id);
+      if (blog?.isBlocked) {
+        await blogModel.findOneAndUpdate(
+          { _id: id },
+          { isBlocked: false },
+          { new: true }
+        );
+        return true;
+      } else {
+        await blogModel.findOneAndUpdate(
+          { _id: id },
+          { isBlocked: true },
+          { new: true }
+        );
+        return true;
+      }
+    } catch (error) {
+      return false;
     }
   }
 }

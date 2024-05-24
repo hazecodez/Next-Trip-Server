@@ -30,10 +30,19 @@ class BookingRepo implements IBookingRepo {
       return false;
     }
   }
-  async fetchBookingByUserId(id: string): Promise<any> {
+  async fetchBookingByUserId(id: string, page: number): Promise<any> {
     try {
-      const bookings = await bookingModel.find({ travelerId: id });
-      return bookings;
+      const limit = 4;
+      const skip = (page - 1) * limit;
+      const TotalBookings = await bookingModel
+        .find({ travelerId: id })
+        .countDocuments();
+      const totalPages = Math.floor(TotalBookings / limit);
+      const bookings = await bookingModel
+        .find({ travelerId: id })
+        .skip(skip)
+        .limit(limit);
+      return { bookings, totalPages };
     } catch (error) {
       console.log(error);
     }

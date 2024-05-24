@@ -33,7 +33,8 @@ export default class BlogController {
 
   async fetchAllBlogs(req: Request, res: Response) {
     try {
-      const response = await this.blogUseCase.fetchBlogs();
+      const page = parseInt(req.query.page as string);
+      const response = await this.blogUseCase.fetchBlogs(page);
       if (response?.status) {
         res.status(200).json({
           status: response?.status,
@@ -144,7 +145,7 @@ export default class BlogController {
   //-----------------------------------------------------------------------------------------------------------------------------------------------------------
   
   async removeBlogByUser(req: Request, res: Response) {
-    try {
+    try {   
       const { blogId } = req.body;
       const response = await this.blogUseCase.removeBlog(blogId);
       if (response?.status) {

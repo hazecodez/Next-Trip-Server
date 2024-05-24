@@ -60,8 +60,6 @@ function socketConfiguration(server: any) {
       );
       const user = getUser(receiverId);
       if (user) {
-        console.log("ivanetha:", user);
-        
         socketIO.to(user.socketId).emit("getMessage", { senderId, text });
       }
     });

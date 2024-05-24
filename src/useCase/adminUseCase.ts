@@ -128,5 +128,24 @@ class AdminUseCase implements IAdminUseCase {
       console.log(error);
     }
   }
+  async findBlogsList(search: string, page: number) {
+    try {
+      const blogsData = await this.adminRepo.findBlogsData(
+        search,
+        page
+      );
+      return blogsData;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async blockOrUnblockBlog(id: string) {
+    try {
+      const acted = await this.adminRepo.blockAndUnblockblog(id);
+      return acted;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 export default AdminUseCase;

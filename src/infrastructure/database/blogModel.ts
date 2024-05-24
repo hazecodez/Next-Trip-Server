@@ -35,6 +35,10 @@ const blogSchema: Schema<Blog> = new Schema(
       type: [String],
       default: [],
     },
+    isBlocked:{
+      type:Boolean,
+      default:false
+    },
     comments: {
       type: [
         {
