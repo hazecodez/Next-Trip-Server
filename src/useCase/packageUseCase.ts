@@ -60,12 +60,12 @@ class PackageUseCase implements IPackageUseCase {
       console.log(error);
     }
   }
-  async getPackagesByHost(token: string) {
+  async getPackagesByHost(token: string,page:number) {
     try {
       const decodeToken = this.Jwt.verifyToken(token);
       if (decodeToken) {
         const packageList = await this.repository.getPackagesById(
-          decodeToken.id
+          decodeToken.id,page
         );
         return packageList;
       } else {
@@ -83,9 +83,9 @@ class PackageUseCase implements IPackageUseCase {
       console.log(error);
     }
   }
-  async fetchAllPackages() {
+  async fetchAllPackages(page:number) {
     try {
-      const response = await this.repository.getAllPackages();
+      const response = await this.repository.getAllPackages(page);
       if (response) {
         return {
           status: true,

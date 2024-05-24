@@ -30,8 +30,9 @@ class PackageController implements IPackageController {
 
   async getPackageListByHost(req: Request, res: Response) {
     try {
+      const page = parseInt(req.query.page as string);
       const token = req.cookies.host as string;
-      const response = await this.packageUseCase.getPackagesByHost(token);
+      const response = await this.packageUseCase.getPackagesByHost(token,page);
       if (response) {
         res.status(200).json({ packageList: response });
       } else {
@@ -71,7 +72,8 @@ class PackageController implements IPackageController {
   }
   async fetchAllPackages(req: Request, res: Response) {
     try {
-      const response = await this.packageUseCase.fetchAllPackages();
+      const page = parseInt(req.query.page as string);
+      const response = await this.packageUseCase.fetchAllPackages(page);
       if (response?.status) {
         res.status(200).json(response);
       } else {

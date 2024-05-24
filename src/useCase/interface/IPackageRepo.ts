@@ -6,8 +6,8 @@ interface IPackageRepo {
     images: string[] | undefined,
     hostId: string
   ): Promise<Boolean | undefined>;
-  getPackagesById(id: string): Promise<Package[] | null | undefined>;
-  getAllPackages(): Promise<Package[] | null | undefined>;
+  getPackagesById(id: string,page:number): Promise<any>;
+  getAllPackages(page:number): Promise<any>;
   getPackageDetails(id: string): Promise<Package | null | undefined>;
   updatePackage(
     data: Package,

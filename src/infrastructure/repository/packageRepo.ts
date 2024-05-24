@@ -59,33 +59,59 @@ class PackageRepo implements IPackageRepo {
       console.log(error);
     }
   }
-  async getPackagesById(id: string): Promise<Package[] | null | undefined> {
+  async getPackagesById(id: string, page: number): Promise<any> {
     try {
+      const limit = 2;
+      const skip = (page - 1) * limit;
       const today = new Date();
       const formattedToday = today.toISOString().split("T")[0];
-      const packages = await packageModel.find({
-        host: id,
-        is_verified: true,
-        dur_end: { $gte: formattedToday },
-      });
+      const totalPackages = await packageModel
+        .find({
+          host: id,
+          is_verified: true,
+          dur_end: { $gte: formattedToday },
+        })
+        .countDocuments();
+      const totalPages = Math.floor(totalPackages / limit);
+      const packages = await packageModel
+        .find({
+          host: id,
+          is_verified: true,
+          dur_end: { $gte: formattedToday },
+        })
+        .skip(skip)
+        .limit(limit);
       if (packages) {
-        return packages;
+        return { packages, totalPages };
       }
       return null;
     } catch (error) {
       console.log(error);
     }
   }
-  async getAllPackages(): Promise<Package[] | null | undefined> {
+  async getAllPackages(page: number): Promise<any> {
     try {
+      const limit = 3;
+      const skip = (page - 1) * limit;
       const today = new Date();
       const formattedToday = today.toISOString().split("T")[0];
-      const packages = await packageModel.find({
-        is_verified: true,
-        capacity: { $gt: 0 },
-        book_end: { $gte: formattedToday },
-      });
-      if (packages) return packages;
+      const totalPackages = await packageModel
+        .find({
+          is_verified: true,
+          capacity: { $gt: 0 },
+          book_end: { $gte: formattedToday },
+        })
+        .countDocuments();
+      const totalPages = Math.floor(totalPackages / limit);
+      const packages = await packageModel
+        .find({
+          is_verified: true,
+          capacity: { $gt: 0 },
+          book_end: { $gte: formattedToday },
+        })
+        .skip(skip)
+        .limit(limit);
+      if (packages) return { packages, totalPages };
       return null;
     } catch (error) {
       console.log(error);
