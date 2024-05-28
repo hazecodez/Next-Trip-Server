@@ -64,6 +64,18 @@ function socketConfiguration(server: any) {
       }
     });
 
+    socket.on("videoCallInitiated", (data) => {
+      console.log(data.receiverId);
+      const user = getUser(data.receiverId);
+      if (user) {
+        socketIO.to(user?.socketId).emit("videoCallAccept", {
+          username: data.username,
+          roomId: data.roomId,
+        });
+      }
+      console.log("emmitted the call event to", user?.socketId);
+    });
+
     socket.on("disconnect", () => {
       console.log("🔥: A user disconnected");
       removeUser(socket.id).catch((err) =>
