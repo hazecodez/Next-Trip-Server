@@ -30,7 +30,9 @@ class BookingUseCase {
       const response = await this.bookigRepository.saveBookedPackage(
         traveler?.id,
         Data,
-        packageDetails?.book_end as string
+        packageDetails?.book_end as string,
+        packageDetails?.dur_start as string,
+        packageDetails?.dur_end as string
       );
       await this.packageRepository.updatePackageCapacity(
         Data.packageId,
@@ -44,18 +46,25 @@ class BookingUseCase {
           packageDetails?.destination as string
         );
         //-------for payment
-        const sessionId = await checkout(Data);
-        if (sessionId) {
-          return { sessionId, status: true };
+        if (Data.method === "Online Payment") {
+          const sessionId = await checkout(Data);
+          if (sessionId) {
+            return { sessionId, status: true };
+          }
+        } else {
+          return { status: true, method: "Wallet" };
         }
       }
     } catch (error) {
       console.log(error);
     }
   }
-  async fetchBookingsForUser(id: string,page:number): Promise<any> {
+  async fetchBookingsForUser(id: string, page: number): Promise<any> {
     try {
-      const response = await this.bookigRepository.fetchBookingByUserId(id,page);
+      const response = await this.bookigRepository.fetchBookingByUserId(
+        id,
+        page
+      );
       if (response) return response;
     } catch (error) {
       console.log(error);

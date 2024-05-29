@@ -12,6 +12,7 @@ interface IAdminRepo {
   verifyPackage(id: string): Promise<boolean>;
   findPackagesData(search: string, page: number): Promise<any>;
   findBlogsData(search: string, page: number): Promise<any>;
+  dashboard():Promise<any>;
 }
 
 export default IAdminRepo;

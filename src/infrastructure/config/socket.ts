@@ -49,18 +49,13 @@ function socketConfiguration(server: any) {
       socketIO.emit("getUsers", users);
     });
 
-    socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-      console.log(
-        "Message send from : ",
-        senderId,
-        "To: ",
-        receiverId,
-        "Message: ",
-        text
-      );
+    socket.on("sendMessage", ({ senderId, receiverId, text, senderName }) => {
       const user = getUser(receiverId);
       if (user) {
         socketIO.to(user.socketId).emit("getMessage", { senderId, text });
+        socketIO
+          .to(user.socketId)
+          .emit("getNotification", { senderId, text, senderName });
       }
     });
 

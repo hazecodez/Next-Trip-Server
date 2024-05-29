@@ -33,14 +33,15 @@ class BookingController {
         traveler?.email as string
       );
       if (response?.status) {
-        const walletUpdated = await this.hostUseCase.updateHostWallet(
-          req.body,
-          token
-        );
-        if (walletUpdated) {
-          res.status(200).json(response?.sessionId);
+        await this.hostUseCase.updateHostWallet(req.body, token);
+        if (response?.method === "Wallet") {
+          await this.travelerUseCase.walletPayment(
+            req.body,
+            traveler?._id as string
+          );
+          res.status(200).json({ status: true });
         } else {
-          res.json(response);
+          res.status(200).json(response?.sessionId);
         }
       } else {
         res.json(response);
@@ -53,7 +54,10 @@ class BookingController {
     try {
       const userId = req.query.travelerId as string;
       const page = parseInt(req.query.page as string);
-      const response = await this.bookingUseCase.fetchBookingsForUser(userId,page);
+      const response = await this.bookingUseCase.fetchBookingsForUser(
+        userId,
+        page
+      );
       if (response) {
         res.status(200).json({ status: true, bookings: response });
       } else {

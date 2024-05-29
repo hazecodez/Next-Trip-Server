@@ -18,4 +18,6 @@ export interface Booking {
   totalPrice?: number;
   status?: Status;
   cancelDate?: string;
+  startDate?: string;
+  endDate?: string;
 }

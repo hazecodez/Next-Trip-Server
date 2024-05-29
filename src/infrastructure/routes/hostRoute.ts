@@ -64,7 +64,7 @@ const bookingController = new BookingController(
   packageUseCase
 );
 
-const controller = new HostController(hostUseCase);
+const controller = new HostController(hostUseCase, packageUseCase);
 
 const router = express.Router();
 
@@ -129,6 +129,11 @@ router.post("/create_password", hostAuth, (req, res) =>
 );
 router.post("/profile_dp", hostAuth, (req, res) =>
   controller.profilePicUpdate(req, res)
+);
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+router.get("/dashboard", hostAuth, (req, res) =>
+  controller.dashboard(req, res)
 );
 
 export default router;

@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
 import HostUseCase from "../useCase/hostUseCase";
 import IHostController from "../useCase/interface/IHostCon";
+import PackageUseCase from "../useCase/packageUseCase";
 
 class HostController implements IHostController {
   private hostUseCase: HostUseCase;
-  constructor(hostUseCase: HostUseCase) {
+  private packageUseCase: PackageUseCase;
+  constructor(hostUseCase: HostUseCase, packageUseCase: PackageUseCase) {
     this.hostUseCase = hostUseCase;
+    this.packageUseCase = packageUseCase;
   }
 
   async SignUpAndSendOtp(req: Request, res: Response) {
@@ -239,6 +242,22 @@ class HostController implements IHostController {
         res
           .json({ status: response?.status, message: response?.message })
           .status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async dashboard(req: Request, res: Response) {
+    try {
+      const token = req.cookies.host;
+      const Host = await this.hostUseCase.getHostProfile(token);
+      const packageCount = await this.packageUseCase.getPackageCountByHost(
+        token
+      );
+      if (Host && packageCount) {
+        res.status(200).json({ status: true, Host:Host.Host, packageCount });
+      } else {
+        res.status(500);
       }
     } catch (error) {
       console.log(error);

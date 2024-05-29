@@ -182,6 +182,17 @@ class AdminRepo implements IAdminRepo {
       return false;
     }
   }
+  async dashboard(): Promise<any> {
+    try {
+      const blog = await blogModel.find().countDocuments();
+      const packages = await packageModel.find().countDocuments();
+      const traveler = await travelerModel.find().countDocuments();
+      const hosts = await hostModel.find().countDocuments();
+      return { blog, packages, traveler, hosts };
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default AdminRepo;

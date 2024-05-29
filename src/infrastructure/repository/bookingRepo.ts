@@ -6,12 +6,14 @@ class BookingRepo implements IBookingRepo {
   async saveBookedPackage(
     id: string,
     Data: any,
-    dur_end: string
+    book_end: string,
+    startDate: string,
+    durEnd: string
   ): Promise<Boolean> {
     try {
-      const endDate = new Date(dur_end);
-      // Subtract three days from the endDate to get the cancelDate
-      const cancelDate = new Date(endDate);
+      const bookEndDate = new Date(book_end);
+      // Subtract three days from the bookendDate to get the cancelDate
+      const cancelDate = new Date(bookEndDate);
       cancelDate.setDate(cancelDate.getDate() - 3);
 
       const saved = await bookingModel.create({
@@ -22,6 +24,8 @@ class BookingRepo implements IBookingRepo {
         status: "booked",
         packageName: Data.name,
         cancelDate: cancelDate,
+        startDate: startDate,
+        endDate: durEnd,
       });
       if (saved) return true;
       return false;
@@ -40,6 +44,7 @@ class BookingRepo implements IBookingRepo {
       const totalPages = Math.floor(TotalBookings / limit);
       const bookings = await bookingModel
         .find({ travelerId: id })
+        .sort({ cancelDate: 1 })
         .skip(skip)
         .limit(limit);
       return { bookings, totalPages };

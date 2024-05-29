@@ -1,7 +1,7 @@
 import { Booking } from "../../domain/booking";
 
 interface IBookingRepo {
-  saveBookedPackage(id: string, Data: any, dur_end: string): Promise<Boolean>;
+  saveBookedPackage(id: string, Data: any, book_end: string,startDate:string,durEnd: string): Promise<Boolean>;
   fetchBookingByUserId(id: string,page:number): Promise<any>;
   fetchBookingByPackageId(id: string): Promise<any>;
   deleteBooking(id: string): Promise<Boolean>;

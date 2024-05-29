@@ -18,6 +18,14 @@ const bookingSchema: Schema<Booking> = new Schema({
     type: String,
     required: true,
   },
+  startDate: {
+    type: String,
+    required: true,
+  },
+  endDate: {
+    type: String,
+    required: true,
+  },
   travelers: {
     type: [
       {

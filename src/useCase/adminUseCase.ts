@@ -130,10 +130,7 @@ class AdminUseCase implements IAdminUseCase {
   }
   async findBlogsList(search: string, page: number) {
     try {
-      const blogsData = await this.adminRepo.findBlogsData(
-        search,
-        page
-      );
+      const blogsData = await this.adminRepo.findBlogsData(search, page);
       return blogsData;
     } catch (error) {
       console.log(error);
@@ -143,6 +140,14 @@ class AdminUseCase implements IAdminUseCase {
     try {
       const acted = await this.adminRepo.blockAndUnblockblog(id);
       return acted;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async dashboard() {
+    try {
+      const response = await this.adminRepo.dashboard();
+      return response;
     } catch (error) {
       console.log(error);
     }

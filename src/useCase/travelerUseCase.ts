@@ -370,7 +370,13 @@ class TravelerUseCase implements ITravelerUseCase {
   }
   async cancelAmountToWallet(Data: any, id: string) {
     try {
-      const updated = await this.repository.cancelAmountToWallet(id, Data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async walletPayment(Data: any, id: string) {
+    try {
+      const updated = await this.repository.walletPayment(id, Data);
       if (updated) return true;
     } catch (error) {
       console.log(error);

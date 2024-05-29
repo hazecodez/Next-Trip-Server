@@ -42,6 +42,7 @@ class PackageController implements IPackageController {
       console.log(error);
     }
   }
+  
   async fetchPackageDetails(req: Request, res: Response) {
     try {
       const { id } = req.body;

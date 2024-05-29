@@ -5,7 +5,6 @@ import { uploadFiles } from "../infrastructure/utils/cloudinary";
 import Jwt from "../infrastructure/utils/jwt";
 import IPackageUseCase from "./interface/IPackageUseCase";
 
-
 class PackageUseCase implements IPackageUseCase {
   private repository: IPackageRepo;
   private Jwt: Jwt;
@@ -60,14 +59,30 @@ class PackageUseCase implements IPackageUseCase {
       console.log(error);
     }
   }
-  async getPackagesByHost(token: string,page:number) {
+  async getPackagesByHost(token: string, page: number) {
     try {
       const decodeToken = this.Jwt.verifyToken(token);
       if (decodeToken) {
         const packageList = await this.repository.getPackagesById(
-          decodeToken.id,page
+          decodeToken.id,
+          page
         );
         return packageList;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getPackageCountByHost(token: string) {
+    try {
+      const decodeToken = this.Jwt.verifyToken(token);
+      if (decodeToken) {
+        const packageCount = await this.repository.getPackageCountByHost(
+          decodeToken.id
+        );
+        return packageCount;
       } else {
         return false;
       }
@@ -83,7 +98,7 @@ class PackageUseCase implements IPackageUseCase {
       console.log(error);
     }
   }
-  async fetchAllPackages(page:number) {
+  async fetchAllPackages(page: number) {
     try {
       const response = await this.repository.getAllPackages(page);
       if (response) {

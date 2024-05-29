@@ -47,7 +47,7 @@ class AdminController implements IAdminController {
     try {
       const search = (req.query.search as string) || "";
       const page = parseInt(req.query.page as string);
-      const travelers = await this.adminUseCase.findTravelersList(search,page);
+      const travelers = await this.adminUseCase.findTravelersList(search, page);
       if (travelers) {
         res.status(200).json({ status: true, travelers });
       } else {
@@ -61,7 +61,7 @@ class AdminController implements IAdminController {
     try {
       const search = (req.query.search as string) || "";
       const page = parseInt(req.query.page as string);
-      const packages = await this.adminUseCase.packagesList(search,page);
+      const packages = await this.adminUseCase.packagesList(search, page);
       if (packages) {
         res.status(200).json({ status: true, packages });
       } else {
@@ -101,7 +101,7 @@ class AdminController implements IAdminController {
     try {
       const search = (req.query.search as string) || "";
       const page = parseInt(req.query.page as string);
-      const hosts = await this.adminUseCase.findHostsList(search,page);
+      const hosts = await this.adminUseCase.findHostsList(search, page);
       if (hosts) {
         res.status(200).json({ status: true, hosts });
       } else {
@@ -128,7 +128,7 @@ class AdminController implements IAdminController {
     try {
       const search = (req.query.search as string) || "";
       const page = parseInt(req.query.page as string);
-      const blogs = await this.adminUseCase.findBlogsList(search,page);
+      const blogs = await this.adminUseCase.findBlogsList(search, page);
       if (blogs) {
         res.status(200).json({ status: true, blogs });
       } else {
@@ -146,6 +146,18 @@ class AdminController implements IAdminController {
         res.status(200).json(response);
       } else {
         res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async dashboard(req: Request, res: Response) {
+    try {
+      const response = await this.adminUseCase.dashboard();
+      if (response) {
+        res.status(200).json(response);
+      } else {
+        res.status(500);
       }
     } catch (error) {
       console.log(error);

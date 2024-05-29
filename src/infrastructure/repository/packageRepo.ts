@@ -169,23 +169,6 @@ class PackageRepo implements IPackageRepo {
       console.log(error);
     }
   }
-  // async saveBookedPackage(id: string, Data: any): Promise<Boolean> {
-  //   try {
-  //     const saved = await bookingModel.create({
-  //       packageId: Data.packageId,
-  //       totalPrice: Data.totalPrice,
-  //       travelerId: id,
-  //       travelers: Data.travelers,
-  //       status: "booked",
-  //       packageName: Data.name,
-  //     });
-  //     if (saved) return true;
-  //     return false;
-  //   } catch (error) {
-  //     console.log(error);
-  //     return false;
-  //   }
-  // }
   async updatePackageCapacity(id: string, count: number): Promise<Boolean> {
     try {
       const updated = await packageModel.findOneAndUpdate(
@@ -197,6 +180,15 @@ class PackageRepo implements IPackageRepo {
     } catch (error) {
       console.log(error);
       return false;
+    }
+  }
+  async getPackageCountByHost(id: string): Promise<number> {
+    try {
+      const packages = await packageModel.find({ host: id }).countDocuments();
+      return packages;
+    } catch (error) {
+      console.log(error);
+      return 0;
     }
   }
 }
