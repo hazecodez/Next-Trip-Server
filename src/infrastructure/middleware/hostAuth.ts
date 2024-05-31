@@ -13,7 +13,9 @@ export const hostAuth = async (
   try {
     const token = req.cookies.host;
     if (!token) {
-      res.json({ status: false, message: "No token found!!!" }).status(401);
+      res
+        .status(401)
+        .json({ blocked: true, role: "host", message: "No token found!!!" });
     } else {
       const decode = jwt.verifyToken(token);
 
@@ -27,9 +29,11 @@ export const hostAuth = async (
             !hostData?.isVerified ||
             !hostData?.emailVerified
           ) {
-            res
-              .status(401)
-              .json({ status: false, blocked: true, message: "Can't access" });
+            res.status(401).json({
+              blocked: true,
+              message: "Can't access",
+              role: decode.role,
+            });
           } else {
             next();
           }

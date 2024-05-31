@@ -13,20 +13,28 @@ export const travelerAuth = async (
   try {
     const token = req.cookies.traveler;
     if (!token) {
-      res
-        .status(401)
-        .json({ status: false, blocked: true, message: "No token found!!!" });
+      res.status(401).json({
+        blocked: true,
+        role: "traveler",
+        message: "No token found!!!",
+      });
     } else {
       const decode = jwt.verifyToken(token);
+
       if (decode) {
         if (decode.role !== "traveler") {
-          return { status: false, blocked: true, message: "Can't access." };
+          return { status: false, message: "Can't access." };
         } else {
           const travelerData = await traveler.findTravelerById(decode.id);
-          if (traveler && travelerData?.isBlocked && !travelerData.isVerified) {
-            res
-              .status(401)
-              .json({ status: false, blocked: true, message: "Can't access" });
+          if (
+            (traveler && travelerData?.isBlocked) ||
+            !travelerData?.isVerified
+          ) {
+            res.status(401).json({
+              blocked: true,
+              message: "Can't access",
+              role: decode.role,
+            });
           } else {
             next();
           }

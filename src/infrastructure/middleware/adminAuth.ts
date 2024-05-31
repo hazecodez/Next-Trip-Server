@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import Jwt from "../utils/jwt";
-
 const jwt = new Jwt();
 
 export const adminAuth = async (
@@ -8,10 +7,12 @@ export const adminAuth = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {   
+  try {
     const token = req.cookies.adminToken;
     if (!token) {
-      res.json({ status: false, message: "no token found" }).status(401);
+      res
+        .status(401)
+        .json({ status: false, role: "admin", message: "no token found" });
     } else {
       const decode = jwt.verifyToken(token);
       if (decode && decode.role !== "admin") {
