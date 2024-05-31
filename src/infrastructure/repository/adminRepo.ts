@@ -1,4 +1,6 @@
-import IAdminRepo from "../../useCase/interface/IAdminRepo";
+import IAdminRepo, {
+  MonthlyPackageReport,
+} from "../../useCase/interface/IAdminRepo";
 import Admin from "../../domain/admin";
 import adminModel from "../database/adminModel";
 import travelerModel from "../database/travelerModel";
@@ -191,6 +193,41 @@ class AdminRepo implements IAdminRepo {
       return { blog, packages, traveler, hosts };
     } catch (error) {
       console.log(error);
+    }
+  }
+  async sales_report(): Promise<MonthlyPackageReport[]> {
+    try {
+      const report: MonthlyPackageReport[] = await packageModel.aggregate([
+        {
+          $group: {
+            _id: {
+              year: {
+                $year: { $dateFromString: { dateString: "$dur_start" } },
+              },
+              month: {
+                $month: { $dateFromString: { dateString: "$dur_start" } },
+              },
+            },
+            packageCount: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            year: "$_id.year",
+            month: "$_id.month",
+            packageCount: 1,
+          },
+        },
+        {
+          $sort: { year: 1, month: 1 },
+        },
+      ]);
+
+      return report;
+    } catch (error) {
+      console.error("Error fetching monthly package report:", error);
+      throw error;
     }
   }
 }

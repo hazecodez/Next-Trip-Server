@@ -1,8 +1,7 @@
 import PackageUseCase from "../useCase/packageUseCase";
 import { Request, Response } from "express";
-import IPackageController from "../useCase/interface/IPackageCon";
 
-class PackageController implements IPackageController {
+class PackageController {
   private packageUseCase: PackageUseCase;
   constructor(packageUseCase: PackageUseCase) {
     this.packageUseCase = packageUseCase;
@@ -32,7 +31,7 @@ class PackageController implements IPackageController {
     try {
       const page = parseInt(req.query.page as string);
       const token = req.cookies.host as string;
-      const response = await this.packageUseCase.getPackagesByHost(token,page);
+      const response = await this.packageUseCase.getPackagesByHost(token, page);
       if (response) {
         res.status(200).json({ packageList: response });
       } else {
@@ -42,7 +41,7 @@ class PackageController implements IPackageController {
       console.log(error);
     }
   }
-  
+
   async fetchPackageDetails(req: Request, res: Response) {
     try {
       const { id } = req.body;

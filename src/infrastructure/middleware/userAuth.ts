@@ -14,8 +14,8 @@ export const travelerAuth = async (
     const token = req.cookies.traveler;
     if (!token) {
       res
-        .json({ status: false, blocked: true, message: "No token found!!!" })
-        .status(401);
+        .status(401)
+        .json({ status: false, blocked: true, message: "No token found!!!" });
     } else {
       const decode = jwt.verifyToken(token);
       if (decode) {
@@ -25,8 +25,8 @@ export const travelerAuth = async (
           const travelerData = await traveler.findTravelerById(decode.id);
           if (traveler && travelerData?.isBlocked && !travelerData.isVerified) {
             res
-              .json({ status: false, blocked: true, message: "Can't access" })
-              .status(401);
+              .status(401)
+              .json({ status: false, blocked: true, message: "Can't access" });
           } else {
             next();
           }

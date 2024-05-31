@@ -1,12 +1,10 @@
 import AdminRepo from "../infrastructure/repository/adminRepo";
 import PackageRepo from "../infrastructure/repository/packageRepo";
-import IAdminUseCase from "./interface/IAdminUseCase";
-
 import Admin from "../domain/admin";
 import Jwt from "../infrastructure/utils/jwt";
 import Bcrypt from "../infrastructure/utils/bcryption";
 
-class AdminUseCase implements IAdminUseCase {
+class AdminUseCase {
   constructor(
     private adminRepo: AdminRepo,
     private jwt: Jwt,
@@ -150,6 +148,15 @@ class AdminUseCase implements IAdminUseCase {
       return response;
     } catch (error) {
       console.log(error);
+    }
+  }
+  async sales_report() {
+    try {
+      const response = await this.adminRepo.sales_report();
+      return response;
+    } catch (error) {
+      console.error("Error fetching monthly package report in useCase:", error);
+      throw error;
     }
   }
 }

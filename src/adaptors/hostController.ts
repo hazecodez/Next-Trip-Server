@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import HostUseCase from "../useCase/hostUseCase";
-import IHostController from "../useCase/interface/IHostCon";
 import PackageUseCase from "../useCase/packageUseCase";
 
-class HostController implements IHostController {
+class HostController {
   private hostUseCase: HostUseCase;
   private packageUseCase: PackageUseCase;
   constructor(hostUseCase: HostUseCase, packageUseCase: PackageUseCase) {
@@ -255,7 +254,20 @@ class HostController implements IHostController {
         token
       );
       if (Host && packageCount) {
-        res.status(200).json({ status: true, Host:Host.Host, packageCount });
+        res.status(200).json({ status: true, Host: Host.Host, packageCount });
+      } else {
+        res.status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async booking_report(req: Request, res: Response) {
+    try {
+      const token = req.cookies.host;
+      const response = await this.hostUseCase.booking_report(token);
+      if (response) {
+        res.status(200).json(response);
       } else {
         res.status(500);
       }

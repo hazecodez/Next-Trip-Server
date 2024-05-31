@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import IChatController from "../useCase/interface/IChatCon";
 import Jwt from "../infrastructure/utils/jwt";
 import chatUseCase from "../useCase/chatUseCase";
 
-class chatController implements IChatController {
+class chatController {
   private chatUseCase: chatUseCase;
   private Jwt: Jwt;
   constructor(chatUseCase: chatUseCase, Jwt: Jwt) {
@@ -59,10 +58,10 @@ class chatController implements IChatController {
   }
   async findUserById(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.body.userId as string;  
+      const userId = req.body.userId as string;
       const who = req.body.who as string;
-          
-      const found = await this.chatUseCase.findUserById(userId,who);      
+
+      const found = await this.chatUseCase.findUserById(userId, who);
       res.status(200).json(found);
     } catch (error) {
       console.log(error);

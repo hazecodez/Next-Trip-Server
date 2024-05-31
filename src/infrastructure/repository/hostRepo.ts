@@ -1,5 +1,8 @@
 import host from "../../domain/host";
-import IHostRepo from "../../useCase/interface/IHostRepo";
+import IHostRepo, {
+  MonthlyBookingReport,
+} from "../../useCase/interface/IHostRepo";
+import bookingModel from "../database/bookingModel";
 import hostModel from "../database/hostModel";
 
 class HostRepo implements IHostRepo {
@@ -160,6 +163,54 @@ class HostRepo implements IHostRepo {
     } catch (error) {
       console.log(error);
       return false;
+    }
+  }
+  async booking_report(hostId: string): Promise<MonthlyBookingReport[]> {
+    try {
+      const report: MonthlyBookingReport[] = await bookingModel.aggregate([
+        // Match bookings by host ID
+        {
+          $match: { hostId },
+        },
+        // Project necessary fields and calculate the number of travelers
+        {
+          $project: {
+            year: { $year: { $dateFromString: { dateString: "$startDate" } } },
+            month: {
+              $month: { $dateFromString: { dateString: "$startDate" } },
+            },
+            travelersCount: { $size: "$travelers" },
+          },
+        },
+        // Group by year and month and sum up the number of travelers
+        {
+          $group: {
+            _id: {
+              year: "$year",
+              month: "$month",
+            },
+            totalBookings: { $sum: "$travelersCount" },
+          },
+        },
+        // Project the final structure
+        {
+          $project: {
+            _id: 0,
+            year: "$_id.year",
+            month: "$_id.month",
+            totalBookings: 1,
+          },
+        },
+        // Sort by year and month
+        {
+          $sort: { year: 1, month: 1 },
+        },
+      ]);
+
+      return report;
+    } catch (error) {
+      console.error("Error fetching monthly booking report:", error);
+      throw error;
     }
   }
 }

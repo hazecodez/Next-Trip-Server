@@ -1,8 +1,7 @@
-import IChatUseCase from "./interface/IChatUseCase";
 import IConversationRepo from "./interface/IConversationRepo";
 import IMessageRepo from "./interface/IMessageRepo";
 
-class chatUseCase implements IChatUseCase {
+class chatUseCase {
   private CoversationRepo: IConversationRepo;
   private MessageRepo: IMessageRepo;
 

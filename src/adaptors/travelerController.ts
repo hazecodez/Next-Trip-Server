@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import TravelerUseCase from "../useCase/travelerUseCase";
-import ITravelerController from "../useCase/interface/ITravelerCon";
 
-class TravelerController implements ITravelerController {
+class TravelerController {
   private travelerUseCase: TravelerUseCase;
   constructor(travelerUseCase: TravelerUseCase) {
     this.travelerUseCase = travelerUseCase;

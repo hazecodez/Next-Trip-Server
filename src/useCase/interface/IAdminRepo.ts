@@ -1,7 +1,10 @@
 import Admin from "../../domain/admin";
-import host from "../../domain/host";
-import Package from "../../domain/package";
-import traveler from "../../domain/traveler";
+
+export interface MonthlyPackageReport {
+  year: number;
+  month: number;
+  packageCount: number;
+}
 
 interface IAdminRepo {
   findAdminByEmail(email: string): Promise<Admin | null | void>;
@@ -12,7 +15,8 @@ interface IAdminRepo {
   verifyPackage(id: string): Promise<boolean>;
   findPackagesData(search: string, page: number): Promise<any>;
   findBlogsData(search: string, page: number): Promise<any>;
-  dashboard():Promise<any>;
+  dashboard(): Promise<any>;
+  sales_report(): Promise<MonthlyPackageReport[]>;
 }
 
 export default IAdminRepo;

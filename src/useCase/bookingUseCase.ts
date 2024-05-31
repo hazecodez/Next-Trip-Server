@@ -32,7 +32,8 @@ class BookingUseCase {
         Data,
         packageDetails?.book_end as string,
         packageDetails?.dur_start as string,
-        packageDetails?.dur_end as string
+        packageDetails?.dur_end as string,
+        packageDetails?.host as string
       );
       await this.packageRepository.updatePackageCapacity(
         Data.packageId,

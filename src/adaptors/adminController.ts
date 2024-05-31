@@ -1,8 +1,7 @@
 import AdminUseCase from "../useCase/adminUseCase";
 import { Request, Response } from "express";
-import IAdminController from "../useCase/interface/IAdminCon";
 
-class AdminController implements IAdminController {
+class AdminController {
   constructor(private adminUseCase: AdminUseCase) {
     this.adminUseCase = adminUseCase;
   }
@@ -154,6 +153,18 @@ class AdminController implements IAdminController {
   async dashboard(req: Request, res: Response) {
     try {
       const response = await this.adminUseCase.dashboard();
+      if (response) {
+        res.status(200).json(response);
+      } else {
+        res.status(500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async sales_report(req: Request, res: Response) {
+    try {
+      const response = await this.adminUseCase.sales_report();
       if (response) {
         res.status(200).json(response);
       } else {

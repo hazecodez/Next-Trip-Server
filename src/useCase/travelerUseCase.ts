@@ -1,6 +1,5 @@
 import traveler from "../domain/traveler";
 import ITravelerRepo from "./interface/ITravelerRepo";
-import ITravelerUseCase from "./interface/ITravelerUseCase";
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config({ path: path.resolve(__dirname, ".env") });
@@ -19,7 +18,7 @@ interface profileData {
   newPass?: string;
 }
 
-class TravelerUseCase implements ITravelerUseCase {
+class TravelerUseCase {
   constructor(
     private repository: ITravelerRepo,
     private generateOtp: GenerateOTP,

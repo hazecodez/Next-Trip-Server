@@ -1,11 +1,9 @@
 import Package from "../domain/package";
 import IPackageRepo from "./interface/IPackageRepo";
-
 import { uploadFiles } from "../infrastructure/utils/cloudinary";
 import Jwt from "../infrastructure/utils/jwt";
-import IPackageUseCase from "./interface/IPackageUseCase";
 
-class PackageUseCase implements IPackageUseCase {
+class PackageUseCase {
   private repository: IPackageRepo;
   private Jwt: Jwt;
   constructor(repository: IPackageRepo, jwt: Jwt) {

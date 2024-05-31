@@ -60,5 +60,8 @@ router.patch("/blog_action", adminAuth, (req, res) =>
 router.get("/dashboard", adminAuth, (req, res) =>
   controller.dashboard(req, res)
 );
+router.get("/sales", adminAuth, (req, res) =>
+  controller.sales_report(req, res)
+);
 
 export default router;

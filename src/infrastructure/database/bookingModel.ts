@@ -26,6 +26,10 @@ const bookingSchema: Schema<Booking> = new Schema({
     type: String,
     required: true,
   },
+  hostId: {
+    type: String,
+    required: true,
+  },
   travelers: {
     type: [
       {

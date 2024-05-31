@@ -135,5 +135,8 @@ router.post("/profile_dp", hostAuth, (req, res) =>
 router.get("/dashboard", hostAuth, (req, res) =>
   controller.dashboard(req, res)
 );
+router.get("/sales", hostAuth, (req, res) =>
+  controller.booking_report(req, res)
+);
 
 export default router;

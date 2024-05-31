@@ -8,7 +8,8 @@ class BookingRepo implements IBookingRepo {
     Data: any,
     book_end: string,
     startDate: string,
-    durEnd: string
+    durEnd: string,
+    hostId: string
   ): Promise<Boolean> {
     try {
       const bookEndDate = new Date(book_end);
@@ -26,6 +27,7 @@ class BookingRepo implements IBookingRepo {
         cancelDate: cancelDate,
         startDate: startDate,
         endDate: durEnd,
+        hostId: hostId,
       });
       if (saved) return true;
       return false;

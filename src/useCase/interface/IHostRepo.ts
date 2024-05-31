@@ -1,5 +1,9 @@
 import host from "../../domain/host";
-
+export interface MonthlyBookingReport {
+  year: number;
+  month: number;
+  totalBookings: number;
+}
 interface IHostRepo {
   findHostByEmail(email: string): Promise<host | null | undefined>;
   findHostById(id: string): Promise<host | null | undefined>;
@@ -12,6 +16,7 @@ interface IHostRepo {
   updateProfile(Data:any,id:string):Promise<Boolean>;
   profilePicUpdate(id:string,image:string):Promise<Boolean>;
   debitedFromWallet(Data:any,travelerName:string,hostId:string):Promise<Boolean>;
+  booking_report(hostId:string):Promise<MonthlyBookingReport[]>;
 }
 
 export default IHostRepo;

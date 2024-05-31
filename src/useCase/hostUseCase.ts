@@ -9,7 +9,6 @@ import Bcrypt from "../infrastructure/utils/bcryption";
 import Jwt from "../infrastructure/utils/jwt";
 import jwt from "jsonwebtoken";
 import OtpRepository from "../infrastructure/repository/otpRepo";
-import IHostUseCase from "./interface/IHostUseCase";
 import ITravelerRepo from "./interface/ITravelerRepo";
 import { uploadSingleFile } from "../infrastructure/utils/cloudinary";
 
@@ -20,7 +19,7 @@ interface profileData {
   newPass?: string;
 }
 
-class HostUseCase implements IHostUseCase {
+class HostUseCase {
   constructor(
     private repository: IHostRepo,
     private generateOtp: GenerateOTP,
@@ -376,6 +375,15 @@ class HostUseCase implements IHostUseCase {
           message: "Oops!! something went wrong.",
         };
       }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async booking_report(token: string) {
+    try {
+      const host = this.Jwt.verifyToken(token);
+      const response = await this.repository.booking_report(host?.id);
+      return response;
     } catch (error) {
       console.log(error);
     }

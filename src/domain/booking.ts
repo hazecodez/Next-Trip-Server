@@ -20,4 +20,5 @@ export interface Booking {
   cancelDate?: string;
   startDate?: string;
   endDate?: string;
+  hostId?: string;
 }
