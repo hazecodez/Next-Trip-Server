@@ -12,7 +12,7 @@ export default class BlogController {
       const name = req.body.name;
       const form = req.body.form;
       const image = req.body.image;
-      const token = req.cookies.traveler;
+      const token = req.headers.authorization as string;
 
       const response = await this.blogUseCase.createBlog(form, image, token,name);
       if (response?.status) {
@@ -75,7 +75,7 @@ export default class BlogController {
   
   async fetchBlogsByUser(req: Request, res: Response) {
     try {
-      const token = req.cookies.traveler;
+      const token = req.headers.authorization as string;
       const response = await this.blogUseCase.fetchBlogsByUser(token);
       if (response?.status) {
         res.status(200).json({
@@ -98,7 +98,7 @@ export default class BlogController {
   
   async commentBlogByUser(req: Request, res: Response) {
     try {
-      const token = req.cookies.traveler;
+      const token = req.headers.authorization as string;
       const { blogId, comment } = req.body;
       const response = await this.blogUseCase.commentBlog(
         comment,
@@ -124,7 +124,7 @@ export default class BlogController {
   
   async likeAndUnlikeBlogByUser(req: Request, res: Response) {
     try {
-      const token = req.cookies.traveler;
+      const token = req.headers.authorization as string;
       const { blogId } = req.body;
       const response = await this.blogUseCase.likeAndUnlikeBlog(token, blogId);
       if (response?.status) {

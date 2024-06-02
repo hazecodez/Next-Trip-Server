@@ -13,13 +13,7 @@ class TravelerController {
         req.body
       );
       if (signUpResponse.status) {
-        res
-          .cookie("travelerOtp", signUpResponse.Token, {
-            expires: new Date(Date.now() + 25892000000),
-            secure: true,
-          })
-          .status(200)
-          .json(signUpResponse);
+        res.status(200).json(signUpResponse);
       } else {
         res.json(signUpResponse);
       }
@@ -30,8 +24,7 @@ class TravelerController {
 
   async ResendOtp(req: Request, res: Response) {
     try {
-      const token = req.cookies.travelerOtp;
-      const response = await this.travelerUseCase.resendOtp(token);
+      const response = await this.travelerUseCase.resendOtp(req.body.token);
       if (response?.status) {
         res.status(200).json(response);
       } else {
@@ -43,21 +36,13 @@ class TravelerController {
   }
   async AuthenticateTraveler(req: Request, res: Response) {
     try {
-      const token = req.cookies.travelerOtp;
-
       const response = await this.travelerUseCase.authentication(
-        token,
+        req.body.token,
         req.body.otp
       );
 
       if (response?.status) {
-        res
-          .cookie("traveler", response.token, {
-            expires: new Date(Date.now() + 25892000000),
-            secure: true,
-          })
-          .status(200)
-          .json(response);
+        res.status(200).json(response);
       } else {
         res.json(response);
       }
@@ -75,13 +60,7 @@ class TravelerController {
       );
       if (verifiedTraveler && verifiedTraveler.status) {
         if (verifiedTraveler.status) {
-          res
-            .cookie("traveler", verifiedTraveler.token, {
-              expires: new Date(Date.now() + 25892000000),
-              secure: true,
-            })
-            .status(200)
-            .json({ verifiedTraveler });
+          res.status(200).json({ verifiedTraveler });
         } else {
           res.json(verifiedTraveler);
         }
@@ -97,13 +76,7 @@ class TravelerController {
     try {
       const response = await this.travelerUseCase.googleAuthLogin(req.body);
       if (response?.status) {
-        res
-          .cookie("traveler", response.token, {
-            expires: new Date(Date.now() + 25892000000),
-            secure: true,
-          })
-          .status(200)
-          .json(response);
+        res.status(200).json(response);
       } else {
         res.json(response);
       }
@@ -118,13 +91,7 @@ class TravelerController {
 
       const response = await this.travelerUseCase.forgetPassSendOTP(email);
       if (response?.status) {
-        res
-          .cookie("forget", response.token, {
-            expires: new Date(Date.now() + 25892000000),
-            secure: true,
-          })
-          .status(200)
-          .json(response);
+        res.status(200).json(response);
       } else {
         res.json(response);
       }
@@ -135,9 +102,8 @@ class TravelerController {
 
   async confirmForgetOTP(req: Request, res: Response) {
     try {
-      const token = req.cookies.forget;
       const response = await this.travelerUseCase.confirmForgetOTP(
-        token,
+        req.body.token,
         req.body.otp
       );
       if (response?.status) {
@@ -152,10 +118,8 @@ class TravelerController {
 
   async upadateTravelerPassword(req: Request, res: Response) {
     try {
-      const token = req.cookies.forget;
-
       const response = await this.travelerUseCase.upadateTravelerPassword(
-        token,
+        req.body.token,
         req.body.password
       );
       if (response?.status) {
@@ -170,8 +134,11 @@ class TravelerController {
 
   async travelerProfile(req: Request, res: Response) {
     try {
-      const token = req.cookies.traveler;
-      const response = await this.travelerUseCase.travelerProfile(token);
+      const token = req.headers.authorization as string;
+
+      const response = await this.travelerUseCase.travelerProfile(
+        token as string
+      );
       if (response?.status) {
         res.status(200).json(response.Traveler);
       } else {
@@ -184,9 +151,9 @@ class TravelerController {
 
   async profileUpdate(req: Request, res: Response) {
     try {
-      const token = req.cookies.traveler;
+      const token = req.headers.authorization as string;
       const response = await this.travelerUseCase.profileUpdate(
-        token,
+        token as string,
         req.body
       );
       if (response) {
@@ -202,9 +169,9 @@ class TravelerController {
   }
   async changePassword(req: Request, res: Response) {
     try {
-      const token = req.cookies.traveler;
+      const token = req.headers.authorization as string;
       const response = await this.travelerUseCase.changePassword(
-        token,
+        token as string,
         req.body
       );
       if (response?.status) {
@@ -220,9 +187,9 @@ class TravelerController {
   }
   async createPassword(req: Request, res: Response) {
     try {
-      const token = req.cookies.traveler;
+      const token = req.headers.authorization as string;
       const response = await this.travelerUseCase.createPassword(
-        token,
+        token as string,
         req.body.password
       );
       if (response?.status) {
@@ -240,9 +207,9 @@ class TravelerController {
   }
   async profilePicUpdate(req: Request, res: Response) {
     try {
-      const token = req.cookies.traveler;
+      const token = req.headers.authorization as string;
       const response = await this.travelerUseCase.profilePicUpdate(
-        token,
+        token as string,
         req.body.image
       );
       if (response?.status) {

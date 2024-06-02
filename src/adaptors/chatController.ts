@@ -12,7 +12,7 @@ class chatController {
 
   async newConversation(req: Request, res: Response): Promise<void> {
     try {
-      const sender = this.Jwt.verifyToken(req.cookies.traveler);
+      const sender = this.Jwt.verifyToken(req.headers.authorization as string);
       if (sender) {
         const receiverId = req.query.hostId as string;
         const newConversation = await this.chatUseCase.newConversation(

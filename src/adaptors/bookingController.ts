@@ -23,7 +23,7 @@ class BookingController {
 
   async bookPackage(req: Request, res: Response) {
     try {
-      const token = req.cookies.traveler as string;
+      const token = req.headers.authorization as string;
       const traveler = await this.travelerUseCase.verifyTokenAndFindTraveler(
         token
       );

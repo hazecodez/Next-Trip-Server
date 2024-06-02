@@ -11,7 +11,9 @@ export const hostAuth = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.cookies.host;
+    const token = req.headers.authorization as string;
+    
+    
     if (!token) {
       res
         .status(401)

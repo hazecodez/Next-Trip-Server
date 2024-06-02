@@ -11,7 +11,7 @@ export const travelerAuth = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.cookies.traveler;
+    const token = req.headers.authorization as string;   
     if (!token) {
       res.status(401).json({
         blocked: true,

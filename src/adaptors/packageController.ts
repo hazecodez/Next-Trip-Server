@@ -10,7 +10,7 @@ class PackageController {
     try {
       const formData = req.body.form;
       const images = req.body.images;
-      const host = req.cookies.host as string;
+      const host = req.headers.authorization as string;
 
       const response = await this.packageUseCase.createPackage(
         formData,
@@ -30,7 +30,7 @@ class PackageController {
   async getPackageListByHost(req: Request, res: Response) {
     try {
       const page = parseInt(req.query.page as string);
-      const token = req.cookies.host as string;
+      const token = req.headers.authorization as string;
       const response = await this.packageUseCase.getPackagesByHost(token, page);
       if (response) {
         res.status(200).json({ packageList: response });
@@ -44,8 +44,12 @@ class PackageController {
 
   async fetchPackageDetails(req: Request, res: Response) {
     try {
+      console.log("ethiyooo package contro");
+      
       const { id } = req.body;
       const details = await this.packageUseCase.getPackageDetails(id);
+      console.log("ithonn nokk package contro",details);
+      
       if (details) res.status(200).json(details);
       res.status(500);
     } catch (error) {
@@ -83,24 +87,6 @@ class PackageController {
       console.log(error);
     }
   }
-  // async bookPackage(req: Request, res: Response) {
-  //   try {
-  //     const token = req.cookies.traveler as string;
-  //     const response = await this.packageUseCase.bookPackage(req.body, token);
-  //     if (response?.status) {
-  //       const walletUpdated = await this.hostUseCase.updateHostWallet(req.body, token);
-  //       if (walletUpdated) {
-  //         res.status(200).json(response?.sessionId);
-  //       }else {
-  //         res.json(response);
-  //       }
-  //     } else {
-  //       res.json(response);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 }
 
 export default PackageController;

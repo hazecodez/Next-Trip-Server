@@ -14,13 +14,7 @@ class HostController {
     try {
       const signUpResponse = await this.hostUseCase.signUpAndSendOtp(req.body);
       if (signUpResponse?.status) {
-        res
-          .cookie("hostOtp", signUpResponse.Token, {
-            expires: new Date(Date.now() + 25892000000),
-            secure: true,
-          })
-          .status(200)
-          .json(signUpResponse);
+        res.status(200).json(signUpResponse);
       } else {
         res.json(signUpResponse);
       }
@@ -30,7 +24,7 @@ class HostController {
   }
   async ResendOtp(req: Request, res: Response) {
     try {
-      const token = req.cookies.hostOtp;
+      const token = req.body.token;
       const response = await this.hostUseCase.resendOtp(token);
       if (response?.status) {
         res.status(200).json(response);
@@ -44,9 +38,8 @@ class HostController {
 
   async AuthenticateHost(req: Request, res: Response) {
     try {
-      const token = req.cookies.hostOtp;
       const response = await this.hostUseCase.authentication(
-        token,
+        req.body.token,
         req.body.otp
       );
       if (response?.status) {
@@ -65,13 +58,7 @@ class HostController {
       const verifiedHost = await this.hostUseCase.Login(email, password);
       if (verifiedHost && verifiedHost.status) {
         if (verifiedHost?.status) {
-          res
-            .cookie("host", verifiedHost.token, {
-              expires: new Date(Date.now() + 25892000000),
-              secure: true,
-            })
-            .status(200)
-            .json({ verifiedHost });
+          res.status(200).json({ verifiedHost });
         } else {
           res.json(verifiedHost).status(401);
         }
@@ -87,13 +74,7 @@ class HostController {
       const response = await this.hostUseCase.googleAuthLogin(req.body);
       if (response?.status) {
         if (response.token) {
-          res
-            .cookie("host", response.token, {
-              expires: new Date(Date.now() + 25892000000),
-              secure: true,
-            })
-            .status(200)
-            .json(response);
+          res.status(200).json(response);
         } else {
           res.json(response).status(401);
         }
@@ -109,13 +90,7 @@ class HostController {
       const email = req.body.email;
       const response = await this.hostUseCase.forgetPassSendOTP(email);
       if (response?.status) {
-        res
-          .cookie("forget", response.token, {
-            expires: new Date(Date.now() + 25892000000),
-            secure: true,
-          })
-          .status(200)
-          .json(response);
+        res.status(200).json(response);
       } else {
         res.json(response);
       }
@@ -125,10 +100,8 @@ class HostController {
   }
   async confirmForgetOTP(req: Request, res: Response) {
     try {
-      const token = req.cookies.forget;
-
       const response = await this.hostUseCase.confirmForgetOTP(
-        token,
+        req.body.token,
         req.body.otp
       );
       if (response?.status) {
@@ -142,9 +115,8 @@ class HostController {
   }
   async updateHostPassword(req: Request, res: Response) {
     try {
-      const token = req.cookies.forget;
       const response = await this.hostUseCase.upadateHostPassword(
-        token,
+        req.body.token,
         req.body.password
       );
       if (response?.status) {
@@ -159,7 +131,7 @@ class HostController {
 
   async getHostProfile(req: Request, res: Response) {
     try {
-      const token = req.cookies.host;
+      const token = req.headers.authorization as string;
       const response = await this.hostUseCase.getHostProfile(token);
       if (response?.status) {
         res.status(200).json(response.Host);
@@ -173,7 +145,7 @@ class HostController {
 
   async hostProfileUpdate(req: Request, res: Response) {
     try {
-      const token = req.cookies.host;
+      const token = req.headers.authorization as string;
       const response = await this.hostUseCase.hostProfileUpdate(
         token,
         req.body
@@ -193,7 +165,7 @@ class HostController {
   }
   async hostChangePassword(req: Request, res: Response) {
     try {
-      const token = req.cookies.host;
+      const token = req.headers.authorization as string;
       const response = await this.hostUseCase.changePassword(token, req.body);
       if (response?.status) {
         res
@@ -208,7 +180,7 @@ class HostController {
   }
   async createPassword(req: Request, res: Response) {
     try {
-      const token = req.cookies.host;
+      const token = req.headers.authorization as string;
       const response = await this.hostUseCase.createPassword(
         token,
         req.body.password
@@ -228,7 +200,7 @@ class HostController {
   }
   async profilePicUpdate(req: Request, res: Response) {
     try {
-      const token = req.cookies.host;
+      const token = req.headers.authorization as string;
       const response = await this.hostUseCase.profilePicUpdate(
         token,
         req.body.image
@@ -248,7 +220,7 @@ class HostController {
   }
   async dashboard(req: Request, res: Response) {
     try {
-      const token = req.cookies.host;
+      const token = req.headers.authorization as string;
       const Host = await this.hostUseCase.getHostProfile(token);
       const packageCount = await this.packageUseCase.getPackageCountByHost(
         token
@@ -264,7 +236,7 @@ class HostController {
   }
   async booking_report(req: Request, res: Response) {
     try {
-      const token = req.cookies.host;
+      const token = req.headers.authorization as string;
       const response = await this.hostUseCase.booking_report(token);
       if (response) {
         res.status(200).json(response);

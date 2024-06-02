@@ -89,7 +89,7 @@ router.post("/verify_otp", (req, res) => {
 router.post("/signup", (req, res) => {
   controller.SignUpAndSendOtp(req, res);
 });
-router.get("/resend_otp", (req, res) => controller.ResendOtp(req, res));
+router.post("/resend_otp", (req, res) => controller.ResendOtp(req, res));
 router.post("/login", (req, res) => {
   controller.TravelerLogin(req, res);
 });
