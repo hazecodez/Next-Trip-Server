@@ -19,7 +19,7 @@ class BlogController {
                 const name = req.body.name;
                 const form = req.body.form;
                 const image = req.body.image;
-                const token = req.cookies.traveler;
+                const token = req.headers.authorization;
                 const response = yield this.blogUseCase.createBlog(form, image, token, name);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res
@@ -87,7 +87,7 @@ class BlogController {
     fetchBlogsByUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.traveler;
+                const token = req.headers.authorization;
                 const response = yield this.blogUseCase.fetchBlogsByUser(token);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json({
@@ -110,7 +110,7 @@ class BlogController {
     commentBlogByUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.traveler;
+                const token = req.headers.authorization;
                 const { blogId, comment } = req.body;
                 const response = yield this.blogUseCase.commentBlog(comment, blogId, token);
                 if (response === null || response === void 0 ? void 0 : response.status) {
@@ -134,7 +134,7 @@ class BlogController {
     likeAndUnlikeBlogByUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.traveler;
+                const token = req.headers.authorization;
                 const { blogId } = req.body;
                 const response = yield this.blogUseCase.likeAndUnlikeBlog(token, blogId);
                 if (response === null || response === void 0 ? void 0 : response.status) {

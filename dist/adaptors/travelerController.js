@@ -18,13 +18,7 @@ class TravelerController {
             try {
                 const signUpResponse = yield this.travelerUseCase.signUpAndSendOtp(req.body);
                 if (signUpResponse.status) {
-                    res
-                        .cookie("travelerOtp", signUpResponse.Token, {
-                        expires: new Date(Date.now() + 25892000000),
-                        secure: true,
-                    })
-                        .status(200)
-                        .json(signUpResponse);
+                    res.status(200).json(signUpResponse);
                 }
                 else {
                     res.json(signUpResponse);
@@ -38,8 +32,7 @@ class TravelerController {
     ResendOtp(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.travelerOtp;
-                const response = yield this.travelerUseCase.resendOtp(token);
+                const response = yield this.travelerUseCase.resendOtp(req.body.token);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json(response);
                 }
@@ -55,16 +48,9 @@ class TravelerController {
     AuthenticateTraveler(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.travelerOtp;
-                const response = yield this.travelerUseCase.authentication(token, req.body.otp);
+                const response = yield this.travelerUseCase.authentication(req.body.token, req.body.otp);
                 if (response === null || response === void 0 ? void 0 : response.status) {
-                    res
-                        .cookie("traveler", response.token, {
-                        expires: new Date(Date.now() + 25892000000),
-                        secure: true,
-                    })
-                        .status(200)
-                        .json(response);
+                    res.status(200).json(response);
                 }
                 else {
                     res.json(response);
@@ -78,17 +64,12 @@ class TravelerController {
     TravelerLogin(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("ethiiiiiiyialloo");
                 const { email, password } = req.body;
                 const verifiedTraveler = yield this.travelerUseCase.Login(email, password);
                 if (verifiedTraveler && verifiedTraveler.status) {
                     if (verifiedTraveler.status) {
-                        res
-                            .cookie("traveler", verifiedTraveler.token, {
-                            expires: new Date(Date.now() + 25892000000),
-                            secure: true,
-                        })
-                            .status(200)
-                            .json({ verifiedTraveler });
+                        res.status(200).json({ verifiedTraveler });
                     }
                     else {
                         res.json(verifiedTraveler);
@@ -108,13 +89,7 @@ class TravelerController {
             try {
                 const response = yield this.travelerUseCase.googleAuthLogin(req.body);
                 if (response === null || response === void 0 ? void 0 : response.status) {
-                    res
-                        .cookie("traveler", response.token, {
-                        expires: new Date(Date.now() + 25892000000),
-                        secure: true,
-                    })
-                        .status(200)
-                        .json(response);
+                    res.status(200).json(response);
                 }
                 else {
                     res.json(response);
@@ -131,13 +106,7 @@ class TravelerController {
                 const email = req.body.email;
                 const response = yield this.travelerUseCase.forgetPassSendOTP(email);
                 if (response === null || response === void 0 ? void 0 : response.status) {
-                    res
-                        .cookie("forget", response.token, {
-                        expires: new Date(Date.now() + 25892000000),
-                        secure: true,
-                    })
-                        .status(200)
-                        .json(response);
+                    res.status(200).json(response);
                 }
                 else {
                     res.json(response);
@@ -151,8 +120,7 @@ class TravelerController {
     confirmForgetOTP(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.forget;
-                const response = yield this.travelerUseCase.confirmForgetOTP(token, req.body.otp);
+                const response = yield this.travelerUseCase.confirmForgetOTP(req.body.token, req.body.otp);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json(response);
                 }
@@ -168,8 +136,7 @@ class TravelerController {
     upadateTravelerPassword(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.forget;
-                const response = yield this.travelerUseCase.upadateTravelerPassword(token, req.body.password);
+                const response = yield this.travelerUseCase.upadateTravelerPassword(req.body.token, req.body.password);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json(response);
                 }
@@ -185,7 +152,7 @@ class TravelerController {
     travelerProfile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.traveler;
+                const token = req.headers.authorization;
                 const response = yield this.travelerUseCase.travelerProfile(token);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json(response.Traveler);
@@ -202,7 +169,7 @@ class TravelerController {
     profileUpdate(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.traveler;
+                const token = req.headers.authorization;
                 const response = yield this.travelerUseCase.profileUpdate(token, req.body);
                 if (response) {
                     res.status(200).json({ status: true, message: "Successfully updated" });
@@ -221,7 +188,7 @@ class TravelerController {
     changePassword(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.traveler;
+                const token = req.headers.authorization;
                 const response = yield this.travelerUseCase.changePassword(token, req.body);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json({ status: true, message: response.message });
@@ -240,7 +207,7 @@ class TravelerController {
     createPassword(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.traveler;
+                const token = req.headers.authorization;
                 const response = yield this.travelerUseCase.createPassword(token, req.body.password);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res
@@ -261,7 +228,7 @@ class TravelerController {
     profilePicUpdate(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.traveler;
+                const token = req.headers.authorization;
                 const response = yield this.travelerUseCase.profilePicUpdate(token, req.body.image);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res

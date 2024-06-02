@@ -53,6 +53,8 @@ class TravelerController {
 
   async TravelerLogin(req: Request, res: Response) {
     try {
+      console.log("ethiiiiiiyialloo");
+      
       const { email, password } = req.body;
       const verifiedTraveler = await this.travelerUseCase.Login(
         email,

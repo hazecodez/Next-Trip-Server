@@ -17,7 +17,7 @@ class chatController {
     newConversation(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sender = this.Jwt.verifyToken(req.cookies.traveler);
+                const sender = this.Jwt.verifyToken(req.headers.authorization);
                 if (sender) {
                     const receiverId = req.query.hostId;
                     const newConversation = yield this.chatUseCase.newConversation(sender.id, receiverId);

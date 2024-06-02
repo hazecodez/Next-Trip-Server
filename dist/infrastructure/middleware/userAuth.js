@@ -19,7 +19,7 @@ const jwt = new jwt_1.default();
 const traveler = new travelerRepo_1.default();
 const travelerAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const token = req.cookies.traveler;
+        const token = req.headers.authorization;
         if (!token) {
             res.status(401).json({
                 blocked: true,

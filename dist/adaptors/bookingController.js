@@ -19,7 +19,7 @@ class BookingController {
     bookPackage(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.traveler;
+                const token = req.headers.authorization;
                 const traveler = yield this.travelerUseCase.verifyTokenAndFindTraveler(token);
                 const response = yield this.bookingUseCase.bookPackage(req.body, token, traveler === null || traveler === void 0 ? void 0 : traveler.email);
                 if (response === null || response === void 0 ? void 0 : response.status) {

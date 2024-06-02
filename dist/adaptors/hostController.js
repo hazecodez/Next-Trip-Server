@@ -19,13 +19,7 @@ class HostController {
             try {
                 const signUpResponse = yield this.hostUseCase.signUpAndSendOtp(req.body);
                 if (signUpResponse === null || signUpResponse === void 0 ? void 0 : signUpResponse.status) {
-                    res
-                        .cookie("hostOtp", signUpResponse.Token, {
-                        expires: new Date(Date.now() + 25892000000),
-                        secure: true,
-                    })
-                        .status(200)
-                        .json(signUpResponse);
+                    res.status(200).json(signUpResponse);
                 }
                 else {
                     res.json(signUpResponse);
@@ -39,7 +33,7 @@ class HostController {
     ResendOtp(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.hostOtp;
+                const token = req.body.token;
                 const response = yield this.hostUseCase.resendOtp(token);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json(response);
@@ -56,8 +50,7 @@ class HostController {
     AuthenticateHost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.hostOtp;
-                const response = yield this.hostUseCase.authentication(token, req.body.otp);
+                const response = yield this.hostUseCase.authentication(req.body.token, req.body.otp);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json(response);
                 }
@@ -77,13 +70,7 @@ class HostController {
                 const verifiedHost = yield this.hostUseCase.Login(email, password);
                 if (verifiedHost && verifiedHost.status) {
                     if (verifiedHost === null || verifiedHost === void 0 ? void 0 : verifiedHost.status) {
-                        res
-                            .cookie("host", verifiedHost.token, {
-                            expires: new Date(Date.now() + 25892000000),
-                            secure: true,
-                        })
-                            .status(200)
-                            .json({ verifiedHost });
+                        res.status(200).json({ verifiedHost });
                     }
                     else {
                         res.json(verifiedHost).status(401);
@@ -104,13 +91,7 @@ class HostController {
                 const response = yield this.hostUseCase.googleAuthLogin(req.body);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     if (response.token) {
-                        res
-                            .cookie("host", response.token, {
-                            expires: new Date(Date.now() + 25892000000),
-                            secure: true,
-                        })
-                            .status(200)
-                            .json(response);
+                        res.status(200).json(response);
                     }
                     else {
                         res.json(response).status(401);
@@ -131,13 +112,7 @@ class HostController {
                 const email = req.body.email;
                 const response = yield this.hostUseCase.forgetPassSendOTP(email);
                 if (response === null || response === void 0 ? void 0 : response.status) {
-                    res
-                        .cookie("forget", response.token, {
-                        expires: new Date(Date.now() + 25892000000),
-                        secure: true,
-                    })
-                        .status(200)
-                        .json(response);
+                    res.status(200).json(response);
                 }
                 else {
                     res.json(response);
@@ -151,8 +126,7 @@ class HostController {
     confirmForgetOTP(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.forget;
-                const response = yield this.hostUseCase.confirmForgetOTP(token, req.body.otp);
+                const response = yield this.hostUseCase.confirmForgetOTP(req.body.token, req.body.otp);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json(response);
                 }
@@ -168,8 +142,7 @@ class HostController {
     updateHostPassword(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.forget;
-                const response = yield this.hostUseCase.upadateHostPassword(token, req.body.password);
+                const response = yield this.hostUseCase.upadateHostPassword(req.body.token, req.body.password);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json(response);
                 }
@@ -185,7 +158,7 @@ class HostController {
     getHostProfile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.host;
+                const token = req.headers.authorization;
                 const response = yield this.hostUseCase.getHostProfile(token);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json(response.Host);
@@ -202,7 +175,7 @@ class HostController {
     hostProfileUpdate(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.host;
+                const token = req.headers.authorization;
                 const response = yield this.hostUseCase.hostProfileUpdate(token, req.body);
                 if (response) {
                     res
@@ -223,7 +196,7 @@ class HostController {
     hostChangePassword(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.host;
+                const token = req.headers.authorization;
                 const response = yield this.hostUseCase.changePassword(token, req.body);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res
@@ -242,7 +215,7 @@ class HostController {
     createPassword(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.host;
+                const token = req.headers.authorization;
                 const response = yield this.hostUseCase.createPassword(token, req.body.password);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res
@@ -263,7 +236,7 @@ class HostController {
     profilePicUpdate(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.host;
+                const token = req.headers.authorization;
                 const response = yield this.hostUseCase.profilePicUpdate(token, req.body.image);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res
@@ -284,7 +257,7 @@ class HostController {
     dashboard(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.host;
+                const token = req.headers.authorization;
                 const Host = yield this.hostUseCase.getHostProfile(token);
                 const packageCount = yield this.packageUseCase.getPackageCountByHost(token);
                 if (Host && packageCount) {
@@ -302,7 +275,7 @@ class HostController {
     booking_report(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const token = req.cookies.host;
+                const token = req.headers.authorization;
                 const response = yield this.hostUseCase.booking_report(token);
                 if (response) {
                     res.status(200).json(response);

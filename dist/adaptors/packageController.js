@@ -18,7 +18,7 @@ class PackageController {
             try {
                 const formData = req.body.form;
                 const images = req.body.images;
-                const host = req.cookies.host;
+                const host = req.headers.authorization;
                 const response = yield this.packageUseCase.createPackage(formData, images, host);
                 if (response === null || response === void 0 ? void 0 : response.status) {
                     res.status(200).json(response);
@@ -36,7 +36,7 @@ class PackageController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const page = parseInt(req.query.page);
-                const token = req.cookies.host;
+                const token = req.headers.authorization;
                 const response = yield this.packageUseCase.getPackagesByHost(token, page);
                 if (response) {
                     res.status(200).json({ packageList: response });
@@ -53,8 +53,10 @@ class PackageController {
     fetchPackageDetails(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("ethiyooo package contro");
                 const { id } = req.body;
                 const details = yield this.packageUseCase.getPackageDetails(id);
+                console.log("ithonn nokk package contro", details);
                 if (details)
                     res.status(200).json(details);
                 res.status(500);

@@ -19,13 +19,7 @@ class AdminController {
             try {
                 const response = yield this.adminUseCase.adminLogin(req.body);
                 if (response === null || response === void 0 ? void 0 : response.status) {
-                    res
-                        .cookie("adminToken", response.token, {
-                        expires: new Date(Date.now() + 25892000000),
-                        secure: true,
-                    })
-                        .status(200)
-                        .json(response);
+                    res.status(200).json(response);
                 }
                 else {
                     res.json(response).status(401);
@@ -41,13 +35,7 @@ class AdminController {
             try {
                 const response = yield this.adminUseCase.adminGoogleLogin(req.body);
                 if (response === null || response === void 0 ? void 0 : response.status) {
-                    res
-                        .cookie("adminToken", response.token, {
-                        expires: new Date(Date.now() + 25892000000),
-                        secure: true,
-                    })
-                        .status(200)
-                        .json(response);
+                    res.status(200).json(response);
                 }
                 else {
                     res.json(response).status(401);

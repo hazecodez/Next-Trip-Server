@@ -19,7 +19,7 @@ const jwt = new jwt_1.default();
 const host = new hostRepo_1.default();
 const hostAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const token = req.cookies.host;
+        const token = req.headers.authorization;
         if (!token) {
             res
                 .status(401)
