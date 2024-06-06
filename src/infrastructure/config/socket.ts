@@ -10,7 +10,7 @@ interface User {
 function socketConfiguration(server: any) {
   const socketIO = new Server(server, {
     cors: {
-      origin: "https://furnicube.shop",
+      origin: process.env.FRONTEND_URL,
     },
   });
   let users: User[] = [];
