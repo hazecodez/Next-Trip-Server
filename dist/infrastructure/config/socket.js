@@ -14,7 +14,7 @@ require("dotenv").config();
 function socketConfiguration(server) {
     const socketIO = new socket_io_1.Server(server, {
         cors: {
-            origin: "https://furnicube.shop",
+            origin: process.env.FRONTEND_URL,
         },
     });
     let users = [];
