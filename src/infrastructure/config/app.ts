@@ -17,7 +17,7 @@ export const createServer = () => {
 
     app.use(
       cors({
-        origin: process.env.FRONTEND_URL,
+        origin: "https://furnicube.shop",
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         credentials: true,
       })
