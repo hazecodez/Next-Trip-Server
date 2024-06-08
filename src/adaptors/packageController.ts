@@ -44,12 +44,9 @@ class PackageController {
 
   async fetchPackageDetails(req: Request, res: Response) {
     try {
-      console.log("ethiyooo package contro");
-      
       const { id } = req.body;
       const details = await this.packageUseCase.getPackageDetails(id);
-      console.log("ithonn nokk package contro",details);
-      
+
       if (details) res.status(200).json(details);
       res.status(500);
     } catch (error) {

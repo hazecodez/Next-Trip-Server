@@ -119,7 +119,7 @@ router.patch("/package_details", travelerAuth, (req, res) =>
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-router.post("/new_conversation", travelerAuth, (req, res) =>
+router.patch("/new_conversation", travelerAuth, (req, res) =>
   ChatController.newConversation(req, res)
 );
 router.get("/get_conversations", travelerAuth, (req, res) =>
