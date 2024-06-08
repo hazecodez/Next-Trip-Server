@@ -110,6 +110,14 @@ class AdminUseCase {
       console.log(error);
     }
   }
+  async verifyHost(id: string) {
+    try {
+      const acted = await this.adminRepo.verifyHost(id);
+      return acted;
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async packagesList(search: string, page: number) {
     try {
       const packagesData = await this.adminRepo.findPackagesData(search, page);

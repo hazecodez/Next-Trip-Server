@@ -111,6 +111,19 @@ class AdminController {
       console.log(error);
     }
   }
+  async verify_Host(req: Request, res: Response) {
+    try {
+      const { id } = req.body;
+      const response = await this.adminUseCase.verifyHost(id);
+      if (response) {
+        res.status(200).json(response);
+      } else {
+        res.json(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async getBlogList(req: Request, res: Response) {
     try {
       const search = (req.query.search as string) || "";

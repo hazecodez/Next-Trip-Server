@@ -12,6 +12,7 @@ interface IAdminRepo {
   blockAndUnblockTraveler(id: string): Promise<boolean>;
   findHostsData(search: string, page: number): Promise<any>;
   blockAndUnblockHost(id: string): Promise<boolean>;
+  verifyHost(id: string): Promise<boolean>;
   verifyPackage(id: string): Promise<boolean>;
   findPackagesData(search: string, page: number): Promise<any>;
   findBlogsData(search: string, page: number): Promise<any>;

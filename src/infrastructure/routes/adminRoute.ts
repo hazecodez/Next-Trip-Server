@@ -39,6 +39,12 @@ router.patch("/host_action", adminAuth, (req, res) =>
   controller.block_unblock_Host(req, res)
 );
 
+
+router.patch("/host_verify", adminAuth, (req, res) =>
+  controller.verify_Host(req, res)
+);
+
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 router.get("/packages", adminAuth, (req, res) =>

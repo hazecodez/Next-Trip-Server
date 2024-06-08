@@ -122,6 +122,18 @@ class AdminRepo implements IAdminRepo {
       return false;
     }
   }
+  async verifyHost(id: string): Promise<boolean> {
+    try {
+      await hostModel.findOneAndUpdate(
+        { _id: id },
+        { isVerified: true },
+        { new: true }
+      );
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
   async findPackagesData(search: string, page: number): Promise<any> {
     try {
       const limit = 6;
