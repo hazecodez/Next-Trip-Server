@@ -46,7 +46,7 @@ class HostRepo implements IHostRepo {
         {
           email: email,
         },
-        { email: 1, name: 1 }
+        { email: 1, name: 1, image:1 }
       );
       return host;
     } catch (error) {

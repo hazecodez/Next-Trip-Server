@@ -50,7 +50,7 @@ class TravelerRepo implements ITravelerRepo {
     try {
       const travaler = await travelerModel.findOne(
         { email: email },
-        { email: 1, name: 1 }
+        { email: 1, name: 1, image:1 }
       );
       return travaler;
     } catch (error) {
