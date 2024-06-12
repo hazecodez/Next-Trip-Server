@@ -60,8 +60,6 @@ class TravelerController {
       );
       if (verifiedTraveler && verifiedTraveler.status) {
         if (verifiedTraveler.status) {
-          console.log("najn", verifiedTraveler.traveler);
-          
           res.status(200).json({ verifiedTraveler });
         } else {
           res.json(verifiedTraveler);
