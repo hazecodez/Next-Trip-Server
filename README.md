@@ -89,7 +89,7 @@ Create a .env file in the root directory and configure the following variables:
 Start the development server:
 
 ```bash
-  npm run dev
+  npm run start
 ```
 
 - Open your browser and go to http://localhost:5050.
